@@ -1,11 +1,15 @@
 name: Build ImmortalWrt NanoPi R6C ImageBuilder
 
 on:
+  push:
+    branches:
+      - imagebuilder
+    paths:
+      - immortalwrt-version.txt
   workflow_dispatch:
 
 permissions:
   contents: write
-  actions: write
 
 concurrency:
   group: imagebuilder-${{ github.ref }}
@@ -13,7 +17,6 @@ concurrency:
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
-  IWRT_VERSION: 24.10.5
   IWRT_TARGET: rockchip
   IWRT_SUBTARGET: armv8
   PROFILE: friendlyarm_nanopi-r6c
@@ -33,6 +36,10 @@ jobs:
         sudo timedatectl set-timezone "$TZ"
         sudo apt-get -qq update
         sudo apt-get -qq install zstd
+
+    - name: Load ImmortalWrt version
+      run: |
+        echo "IWRT_VERSION=$(tr -d '\n' < immortalwrt-version.txt)" >> "$GITHUB_ENV"
 
     - name: Download ImageBuilder
       run: |

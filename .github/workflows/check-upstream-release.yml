@@ -1,0 +1,52 @@
+name: Check ImmortalWrt Stable Release
+
+on:
+  schedule:
+    - cron: '17 */6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: check-upstream-release
+  cancel-in-progress: true
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+  TZ: Asia/Shanghai
+
+jobs:
+  check:
+    runs-on: ubuntu-24.04
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v5
+
+    - name: Fetch latest stable release
+      run: |
+        latest="$(curl -fsSL https://downloads.immortalwrt.org/ | grep -oEm1 'ImmortalWrt [0-9]+\.[0-9]+\.[0-9]+' | awk '{print $2}')"
+        current="$(tr -d '\n' < immortalwrt-version.txt)"
+        echo "LATEST_VERSION=${latest}" >> "$GITHUB_ENV"
+        echo "CURRENT_VERSION=${current}" >> "$GITHUB_ENV"
+        if [ -z "${latest}" ]; then
+          echo "Failed to detect latest ImmortalWrt stable release."
+          exit 1
+        fi
+        if [ "${latest}" = "${current}" ]; then
+          echo "No update detected."
+          exit 0
+        fi
+        echo "${latest}" > immortalwrt-version.txt
+
+    - name: Commit updated version
+      run: |
+        if [ "${LATEST_VERSION}" = "${CURRENT_VERSION}" ]; then
+          exit 0
+        fi
+        git config user.name "github-actions[bot]"
+        git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+        git add immortalwrt-version.txt
+        git commit -m "Update ImmortalWrt to ${LATEST_VERSION}"
+        git push

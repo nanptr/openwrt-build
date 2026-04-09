@@ -8,7 +8,7 @@ GitHub Actions based `ImageBuilder` workflow for `FriendlyARM NanoPi R6C`.
 
 ## Build Target
 - Source: official ImmortalWrt `ImageBuilder`
-- Version: `24.10.5`
+- Version source: `immortalwrt-version.txt`
 - Target: `rockchip/armv8`
 - Profile: `friendlyarm_nanopi-r6c`
 - Rootfs partsize: `1024 MB`
@@ -37,7 +37,9 @@ GitHub Actions based `ImageBuilder` workflow for `FriendlyARM NanoPi R6C`.
 
 ## GitHub Actions
 - Workflow: `.github/workflows/build-imagebuilder.yml`
-- Trigger: `workflow_dispatch`
+- Trigger: `workflow_dispatch` and automatic rebuild when `immortalwrt-version.txt` changes
+- Upstream checker: `.github/workflows/check-upstream-release.yml`
+- Schedule: every 6 hours, only commits when a new stable ImmortalWrt release is detected
 - Release target: GitHub Releases
 
 ## Secrets
