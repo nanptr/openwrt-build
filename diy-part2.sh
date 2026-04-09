@@ -12,7 +12,3 @@
 
 # Modify default IP
 sed -i 's/192.168.1.1/192.168.10.1/g' package/base-files/files/bin/config_generate
-
-# Modify default WAN/LAN
-sed -i 's/lan_if="$1"/lan_if="$2"/g' package/base-files/files/lib/functions/uci-defaults.sh
-sed -i 's/wan_if="$2"/wan_if="$1"/g' package/base-files/files/lib/functions/uci-defaults.sh
