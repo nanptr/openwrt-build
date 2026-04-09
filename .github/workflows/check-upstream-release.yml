@@ -26,12 +26,12 @@ jobs:
 
     - name: Fetch latest stable release
       run: |
-        latest="$(curl -fsSL https://downloads.immortalwrt.org/ | grep -oEm1 'ImmortalWrt [0-9]+\.[0-9]+\.[0-9]+' | awk '{print $2}')"
+        latest="$(curl -fsSL https://downloads.immortalwrt.org/ | grep -oPm1 '(?<=Current Stable Release[^0-9]*)[0-9]+\.[0-9]+\.[0-9]+')"
         current="$(tr -d '\n' < immortalwrt-version.txt)"
         echo "LATEST_VERSION=${latest}" >> "$GITHUB_ENV"
         echo "CURRENT_VERSION=${current}" >> "$GITHUB_ENV"
         if [ -z "${latest}" ]; then
-          echo "Failed to detect latest ImmortalWrt stable release."
+          echo "Failed to detect the current ImmortalWrt stable release."
           exit 1
         fi
         if [ "${latest}" = "${current}" ]; then
