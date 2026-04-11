@@ -1,50 +1,41 @@
-# ImmortalWrt NanoPi R6C ImageBuilder
+# ImmortalWrt NanoPi R6C
 
 [![LICENSE](https://img.shields.io/github/license/mashape/apistatus.svg?style=flat-square&label=LICENSE)](https://github.com/P3TERX/Actions-OpenWrt/blob/master/LICENSE)
 ![GitHub Stars](https://img.shields.io/github/stars/P3TERX/Actions-OpenWrt.svg?style=flat-square&label=Stars&logo=github)
 ![GitHub Forks](https://img.shields.io/github/forks/P3TERX/Actions-OpenWrt.svg?style=flat-square&label=Forks&logo=github)
 
-GitHub Actions based `ImageBuilder` workflow for `FriendlyARM NanoPi R6C`.
+GitHub Actions based full source build workflow for `FriendlyARM NanoPi R6C`.
 
 ## Build Target
-- Source: official ImmortalWrt `ImageBuilder`
-- Version source: `immortalwrt-version.txt`
+- Source: official ImmortalWrt source tree
+- Source branch: `openwrt-24.10`
+- Preferred release selector: `immortalwrt-version.txt`
 - Target: `rockchip/armv8`
-- Profile: `friendlyarm_nanopi-r6c`
+- Device: `friendlyarm_nanopi-r6c`
 - Rootfs partsize: `1024 MB`
 
-## Included Packages
-- `luci`
-- `luci-ssl-nginx`
+## Build Config
+- Main config: `configs/iwrt-nanopi-r6c.config`
+- Custom files: `files/`
+- Workflow: `.github/workflows/build-immortalwrt.yml`
+
+## Included Features
+- LuCI on `nginx` via `luci-ssl-nginx`
+- `docker`, `dockerd`, `docker-compose`
+- Docker cgroup compatibility options enabled in kernel config
+- `zerotier`
 - `luci-app-homeproxy`
 - `luci-app-dockerman`
 - `luci-app-ttyd`
-- `luci-app-zerotier`
-- `luci-i18n-base-zh-cn`
-- `luci-i18n-homeproxy-zh-cn`
-- `luci-i18n-dockerman-zh-cn`
-- `luci-i18n-ttyd-zh-cn`
-- `luci-i18n-zerotier-zh-cn`
-- `nginx-ssl`
-- `docker`
-- `dockerd`
-- `docker-compose`
-- `zerotier`
-- `cgroupfs-mount`
-- `block-mount`
-- `e2fsprogs`
-- `fdisk`
-- `parted`
-- `nvme-cli`
-- `smartmontools`
+- Storage utilities for NVMe, partitioning, and ext4 management
 
 ## Custom Files
 - `files/etc/uci-defaults/99-nanopi-r6c-defaults`
 - Default LAN IP: `192.168.10.1`
 
 ## GitHub Actions
-- Workflow: `.github/workflows/build-imagebuilder.yml`
-- Trigger: `workflow_dispatch` and automatic rebuild when `immortalwrt-version.txt` changes
+- Workflow: `.github/workflows/build-immortalwrt.yml`
+- Trigger: `workflow_dispatch` and automatic rebuild when `immortalwrt-version.txt`, build config, or custom files change
 - Upstream checker: `.github/workflows/check-upstream-release.yml`
 - Schedule: every 6 hours, only commits when a new stable ImmortalWrt release is detected
 - Release target: GitHub Releases
@@ -54,10 +45,9 @@ GitHub Actions based `ImageBuilder` workflow for `FriendlyARM NanoPi R6C`.
 - Release publishing uses the built-in `GITHUB_TOKEN`.
 
 ## Notes
-- This repository now tracks the `ImageBuilder` flow on `main`, including the larger `ROOTFS_PARTSIZE` needed to package `docker` successfully.
-- `imagebuilder-packages.txt` controls the package list embedded into the firmware image.
-- The firmware now includes `nginx` as the LuCI web server and reverse-proxy entry point; site-specific `server` blocks are intended to be managed locally after deployment.
-- The current package set also prepares for SSD partitioning, ext4 formatting, SMART checks, and a LuCI web terminal.
+- This repository now builds full firmware images instead of using `ImageBuilder`, so kernel options can be changed together with package selection.
+- Docker support depends on the full build path because the NanoPi R6C image needs Docker-related cgroup kernel options, not just extra packages.
+- The firmware includes `nginx` as the LuCI web server and reverse-proxy entry point; site-specific `server` blocks are intended to be managed locally after deployment.
 
 ## Credits
 
