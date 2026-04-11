@@ -1,4 +1,5 @@
 luci
+luci-ssl-nginx
 luci-app-homeproxy
 luci-app-dockerman
 luci-app-ttyd
@@ -8,6 +9,7 @@ luci-i18n-homeproxy-zh-cn
 luci-i18n-dockerman-zh-cn
 luci-i18n-ttyd-zh-cn
 luci-i18n-zerotier-zh-cn
+nginx-ssl
 docker
 dockerd
 docker-compose
@@ -19,3 +21,5 @@ fdisk
 parted
 nvme-cli
 smartmontools
+-uhttpd
+-uhttpd-mod-ubus

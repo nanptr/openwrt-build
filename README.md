@@ -15,6 +15,7 @@ GitHub Actions based `ImageBuilder` workflow for `FriendlyARM NanoPi R6C`.
 
 ## Included Packages
 - `luci`
+- `luci-ssl-nginx`
 - `luci-app-homeproxy`
 - `luci-app-dockerman`
 - `luci-app-ttyd`
@@ -24,6 +25,7 @@ GitHub Actions based `ImageBuilder` workflow for `FriendlyARM NanoPi R6C`.
 - `luci-i18n-dockerman-zh-cn`
 - `luci-i18n-ttyd-zh-cn`
 - `luci-i18n-zerotier-zh-cn`
+- `nginx-ssl`
 - `docker`
 - `dockerd`
 - `docker-compose`
@@ -54,6 +56,7 @@ GitHub Actions based `ImageBuilder` workflow for `FriendlyARM NanoPi R6C`.
 ## Notes
 - This repository now tracks the `ImageBuilder` flow on `main`, including the larger `ROOTFS_PARTSIZE` needed to package `docker` successfully.
 - `imagebuilder-packages.txt` controls the package list embedded into the firmware image.
+- The firmware now includes `nginx` as the LuCI web server and reverse-proxy entry point; site-specific `server` blocks are intended to be managed locally after deployment.
 - The current package set also prepares for SSD partitioning, ext4 formatting, SMART checks, and a LuCI web terminal.
 
 ## Credits
