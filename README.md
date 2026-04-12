@@ -24,6 +24,7 @@ GitHub Actions based full source build workflow for `FriendlyARM NanoPi R6C`.
 - `docker`, `dockerd`, `docker-compose`
 - Docker cgroup compatibility options enabled in kernel config
 - `zerotier`
+- `luci-app-diskman`
 - `luci-app-homeproxy`
 - `luci-app-dockerman`
 - `luci-app-ttyd`
