@@ -1,4 +1,4 @@
-name: Build ImmortalWrt NanoPi R6C / R5S
+name: Build ImmortalWrt NanoPi R6C / x64
 
 on:
   push:
@@ -7,9 +7,9 @@ on:
     paths:
       - immortalwrt-version.txt
       - configs/iwrt-nanopi-r6c.config
-      - configs/iwrt-nanopi-r5s.config
+      - configs/iwrt-x64.config
       - files/**
-      - files-r5s/**
+      - files-x64/**
       - .github/workflows/build-immortalwrt.yml
       - README.md
   workflow_dispatch:
@@ -32,10 +32,10 @@ jobs:
             artifact_name: firmware-nanopi-r6c
             config_file: configs/iwrt-nanopi-r6c.config
             custom_files_dir: files
-          - title: NanoPi R5S
-            artifact_name: firmware-nanopi-r5s
-            config_file: configs/iwrt-nanopi-r5s.config
-            custom_files_dir: files-r5s
+          - title: x64
+            artifact_name: firmware-x64
+            config_file: configs/iwrt-x64.config
+            custom_files_dir: files-x64
 
     env:
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
@@ -171,13 +171,13 @@ jobs:
     - name: Generate release notes
       run: |
         {
-          echo "ImmortalWrt NanoPi R6C / R5S"
+          echo "ImmortalWrt NanoPi R6C / x64"
           echo
           echo "Version: ${IWRT_VERSION}"
           echo
           echo "Devices:"
-          echo "- NanoPi R6C: 192.168.10.1"
-          echo "- NanoPi R5S: 192.168.11.1"
+          echo "- NanoPi R6C: 192.168.11.1"
+          echo "- x64: 192.168.10.1"
           echo
           echo "Build mode: full source build"
           echo "Docker cgroup options: enabled"
