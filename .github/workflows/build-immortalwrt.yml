@@ -40,7 +40,6 @@ jobs:
     env:
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
       REPO_URL: https://github.com/immortalwrt/immortalwrt
-      REPO_BRANCH: openwrt-24.10
       CONFIG_FILE: ${{ matrix.config_file }}
       TZ: Asia/Shanghai
 
@@ -51,6 +50,24 @@ jobs:
     - name: Load ImmortalWrt version
       run: |
         echo "IWRT_VERSION=$(tr -d '\n' < immortalwrt-version.txt)" >> "$GITHUB_ENV"
+
+    - name: Select source branch
+      run: |
+        branch=""
+        case "${IWRT_VERSION}" in
+          24.*)
+            branch="openwrt-24.10"
+            ;;
+          25.*)
+            branch="openwrt-25.12"
+            ;;
+          *)
+            echo "Unsupported ImmortalWrt version series: ${IWRT_VERSION}"
+            exit 1
+            ;;
+        esac
+        echo "REPO_BRANCH=${branch}" >> "$GITHUB_ENV"
+        echo "Using source branch ${branch}"
 
     - name: Initialize environment
       env:
@@ -189,7 +206,7 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: immortalwrt-nanopi-${{ env.IWRT_VERSION }}
-        name: immortalwrt-nanopi-${{ env.IWRT_VERSION }}
+        tag_name: immortalwrt-build-${{ env.IWRT_VERSION }}
+        name: immortalwrt-build-${{ env.IWRT_VERSION }}
         body_path: release.txt
         files: release-bundle/*

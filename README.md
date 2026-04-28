@@ -8,7 +8,7 @@ GitHub Actions based full source build workflow for `FriendlyARM NanoPi R6C` and
 
 ## Build Target
 - Source: official ImmortalWrt source tree
-- Source branch: `openwrt-24.10`
+- Source branch: selected automatically from the ImmortalWrt stable version series
 - Preferred release selector: `immortalwrt-version.txt`
 - R6C target: `rockchip/armv8`
 - R6C device: `friendlyarm_nanopi-r6c`
@@ -26,6 +26,7 @@ GitHub Actions based full source build workflow for `FriendlyARM NanoPi R6C` and
 ## Included Features
 - LuCI on `nginx` via `luci-ssl-nginx`
 - `docker`, `dockerd`, `docker-compose`
+- `coremark` with the stock ImmortalWrt `/etc/coremark.sh`
 - Docker cgroup compatibility options enabled in kernel config
 - `zerotier`
 - `luci-app-diskman`
@@ -56,6 +57,7 @@ GitHub Actions based full source build workflow for `FriendlyARM NanoPi R6C` and
 
 ## Notes
 - This repository now builds full firmware images instead of using `ImageBuilder`, so kernel options can be changed together with package selection.
+- The build workflow selects `openwrt-24.10` for `24.*` releases and `openwrt-25.12` for `25.*` releases.
 - Docker support depends on the full build path because the NanoPi R6C and x64 images need Docker-related cgroup kernel options, not just extra packages.
 - The firmware includes `nginx` as the LuCI web server and reverse-proxy entry point; site-specific `server` blocks are intended to be managed locally after deployment.
 
