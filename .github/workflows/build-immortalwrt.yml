@@ -1,4 +1,4 @@
-name: Build ImmortalWrt x64 / NanoPi R6C
+name: Build OpenWrt x64 / ImmortalWrt NanoPi R6C
 
 on:
   push:
@@ -6,8 +6,9 @@ on:
       - main
     paths:
       - immortalwrt-version.txt
+      - openwrt-version.txt
       - configs/iwrt-nanopi-r6c.config
-      - configs/iwrt-x64.config
+      - configs/openwrt-x64.config
       - files/**
       - files-x64/**
       - .github/workflows/build-immortalwrt.yml
@@ -28,18 +29,28 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - title: x64
+          - title: OpenWrt x64
             artifact_name: firmware-x64
-            config_file: configs/iwrt-x64.config
+            config_file: configs/openwrt-x64.config
             custom_files_dir: files-x64
-          - title: NanoPi R6C
+            repo_url: https://github.com/openwrt/openwrt
+            version_file: openwrt-version.txt
+            source_name: OpenWrt
+            extra_feeds: |
+              src-git momo https://github.com/nikkinikki-org/OpenWrt-momo.git;main
+              src-git sbwml_pkgs https://github.com/sbwml/openwrt_pkgs.git;main
+              src-git sbwml_argon https://github.com/sbwml/luci-theme-argon.git;master
+          - title: ImmortalWrt NanoPi R6C
             artifact_name: firmware-nanopi-r6c
             config_file: configs/iwrt-nanopi-r6c.config
             custom_files_dir: files
+            repo_url: https://github.com/immortalwrt/immortalwrt
+            version_file: immortalwrt-version.txt
+            source_name: ImmortalWrt
+            extra_feeds: ""
 
     env:
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
-      REPO_URL: https://github.com/immortalwrt/immortalwrt
       CONFIG_FILE: ${{ matrix.config_file }}
       TZ: Asia/Shanghai
 
@@ -47,14 +58,14 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v5
 
-    - name: Load ImmortalWrt version
+    - name: Load Source Version
       run: |
-        echo "IWRT_VERSION=$(tr -d '\n' < immortalwrt-version.txt)" >> "$GITHUB_ENV"
+        echo "SOURCE_VERSION=$(tr -d '\n' < '${{ matrix.version_file }}')" >> "$GITHUB_ENV"
 
     - name: Select source branch
       run: |
         branch=""
-        case "${IWRT_VERSION}" in
+        case "${SOURCE_VERSION}" in
           24.*)
             branch="openwrt-24.10"
             ;;
@@ -62,12 +73,12 @@ jobs:
             branch="openwrt-25.12"
             ;;
           *)
-            echo "Unsupported ImmortalWrt version series: ${IWRT_VERSION}"
+            echo "Unsupported source version series: ${SOURCE_VERSION}"
             exit 1
             ;;
         esac
         echo "REPO_BRANCH=${branch}" >> "$GITHUB_ENV"
-        echo "Using source branch ${branch}"
+        echo "Using ${{ matrix.source_name }} source branch ${branch}"
 
     - name: Initialize environment
       env:
@@ -90,18 +101,25 @@ jobs:
         sudo mkdir -p /workdir
         sudo chown "$USER:$USER" /workdir
 
-    - name: Clone ImmortalWrt source
+    - name: Clone Source Tree
       working-directory: /workdir
       run: |
-        git clone --filter=blob:none --single-branch -b "$REPO_BRANCH" "$REPO_URL" openwrt
+        git clone --filter=blob:none --single-branch -b "$REPO_BRANCH" "${{ matrix.repo_url }}" openwrt
         cd openwrt
-        if git ls-remote --exit-code --tags origin "v${IWRT_VERSION}" >/dev/null 2>&1; then
-          git fetch --depth=1 origin "refs/tags/v${IWRT_VERSION}:refs/tags/v${IWRT_VERSION}"
-          git checkout -q "v${IWRT_VERSION}"
+        if git ls-remote --exit-code --tags origin "v${SOURCE_VERSION}" >/dev/null 2>&1; then
+          git fetch --depth=1 origin "refs/tags/v${SOURCE_VERSION}:refs/tags/v${SOURCE_VERSION}"
+          git checkout -q "v${SOURCE_VERSION}"
         else
-          echo "Tag v${IWRT_VERSION} not found, using branch ${REPO_BRANCH}."
+          echo "Tag v${SOURCE_VERSION} not found, using branch ${REPO_BRANCH}."
         fi
         ln -sf /workdir/openwrt "$GITHUB_WORKSPACE/openwrt"
+
+    - name: Configure feeds
+      run: |
+        cd openwrt
+        if [ -n "${{ matrix.extra_feeds }}" ]; then
+          printf '%s\n' "${{ matrix.extra_feeds }}" >> feeds.conf.default
+        fi
 
     - name: Update and install feeds
       run: |
@@ -163,9 +181,10 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v5
 
-    - name: Load ImmortalWrt version
+    - name: Load Release Versions
       run: |
-        echo "IWRT_VERSION=$(tr -d '\n' < immortalwrt-version.txt)" >> "$GITHUB_ENV"
+        echo "OPENWRT_VERSION=$(tr -d '\n' < openwrt-version.txt)" >> "$GITHUB_ENV"
+        echo "IMMORTALWRT_VERSION=$(tr -d '\n' < immortalwrt-version.txt)" >> "$GITHUB_ENV"
 
     - name: Download build artifacts
       uses: actions/download-artifact@v4
@@ -188,9 +207,11 @@ jobs:
     - name: Generate release notes
       run: |
         {
-          echo "ImmortalWrt x64 / NanoPi R6C"
+          echo "OpenWrt x64 / ImmortalWrt NanoPi R6C"
           echo
-          echo "Version: ${IWRT_VERSION}"
+          echo "Versions:"
+          echo "- x64 (OpenWrt): ${OPENWRT_VERSION}"
+          echo "- NanoPi R6C (ImmortalWrt): ${IMMORTALWRT_VERSION}"
           echo
           echo "Devices:"
           echo "- x64: 192.168.10.1"
@@ -206,7 +227,7 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: immortalwrt-build-${{ env.IWRT_VERSION }}
-        name: immortalwrt-build-${{ env.IWRT_VERSION }}
+        tag_name: mixed-openwrt-build-${{ env.OPENWRT_VERSION }}-${{ env.IMMORTALWRT_VERSION }}
+        name: mixed-openwrt-build-${{ env.OPENWRT_VERSION }}-${{ env.IMMORTALWRT_VERSION }}
         body_path: release.txt
         files: release-bundle/*
