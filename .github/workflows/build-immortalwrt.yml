@@ -39,7 +39,6 @@ jobs:
             extra_feeds: |
               src-git momo https://github.com/nikkinikki-org/OpenWrt-momo.git;main
               src-git sbwml_pkgs https://github.com/sbwml/openwrt_pkgs.git;main
-              src-git sbwml_argon https://github.com/sbwml/luci-theme-argon.git;master
           - title: ImmortalWrt NanoPi R6C
             artifact_name: firmware-nanopi-r6c
             config_file: configs/iwrt-nanopi-r6c.config
@@ -119,6 +118,9 @@ jobs:
         cd openwrt
         if [ -n "${{ matrix.extra_feeds }}" ]; then
           printf '%s\n' "${{ matrix.extra_feeds }}" >> feeds.conf.default
+        fi
+        if [ "${{ matrix.title }}" = "OpenWrt x64" ]; then
+          printf '%s\n' "src-git sbwml_argon https://github.com/sbwml/luci-theme-argon.git;${REPO_BRANCH}" >> feeds.conf.default
         fi
 
     - name: Update and install feeds
