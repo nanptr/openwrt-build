@@ -1,4 +1,4 @@
-name: Build OpenWrt x64 / ImmortalWrt NanoPi R6C
+name: Build ImmortalWrt x64 / NanoPi R6C
 
 on:
   push:
@@ -6,9 +6,8 @@ on:
       - main
     paths:
       - immortalwrt-version.txt
-      - openwrt-version.txt
       - configs/iwrt-nanopi-r6c.config
-      - configs/openwrt-x64.config
+      - configs/iwrt-x64.config
       - files/**
       - files-x64/**
       - .github/workflows/build-immortalwrt.yml
@@ -29,17 +28,15 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - title: OpenWrt x64
+          - title: x64
             artifact_name: firmware-x64
-            config_file: configs/openwrt-x64.config
+            config_file: configs/iwrt-x64.config
             custom_files_dir: files-x64
-            repo_url: https://github.com/openwrt/openwrt
-            version_file: openwrt-version.txt
-            source_name: OpenWrt
-            extra_feeds: |
-              src-git momo https://github.com/nikkinikki-org/OpenWrt-momo.git;main
-              src-git sbwml_pkgs https://github.com/sbwml/openwrt_pkgs.git;main
-          - title: ImmortalWrt NanoPi R6C
+            repo_url: https://github.com/immortalwrt/immortalwrt
+            version_file: immortalwrt-version.txt
+            source_name: ImmortalWrt
+            extra_feeds: ""
+          - title: NanoPi R6C
             artifact_name: firmware-nanopi-r6c
             config_file: configs/iwrt-nanopi-r6c.config
             custom_files_dir: files
@@ -119,10 +116,6 @@ jobs:
         if [ -n "${{ matrix.extra_feeds }}" ]; then
           printf '%s\n' "${{ matrix.extra_feeds }}" >> feeds.conf.default
         fi
-        if [ "${{ matrix.title }}" = "OpenWrt x64" ]; then
-          printf '%s\n' "src-git sbwml_argon https://github.com/sbwml/luci-theme-argon.git;${REPO_BRANCH}" >> feeds.conf.default
-        fi
-
     - name: Update and install feeds
       run: |
         cd openwrt
@@ -183,10 +176,9 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v5
 
-    - name: Load Release Versions
+    - name: Load ImmortalWrt version
       run: |
-        echo "OPENWRT_VERSION=$(tr -d '\n' < openwrt-version.txt)" >> "$GITHUB_ENV"
-        echo "IMMORTALWRT_VERSION=$(tr -d '\n' < immortalwrt-version.txt)" >> "$GITHUB_ENV"
+        echo "IWRT_VERSION=$(tr -d '\n' < immortalwrt-version.txt)" >> "$GITHUB_ENV"
 
     - name: Download build artifacts
       uses: actions/download-artifact@v4
@@ -209,11 +201,9 @@ jobs:
     - name: Generate release notes
       run: |
         {
-          echo "OpenWrt x64 / ImmortalWrt NanoPi R6C"
+          echo "ImmortalWrt x64 / NanoPi R6C"
           echo
-          echo "Versions:"
-          echo "- x64 (OpenWrt): ${OPENWRT_VERSION}"
-          echo "- NanoPi R6C (ImmortalWrt): ${IMMORTALWRT_VERSION}"
+          echo "Version: ${IWRT_VERSION}"
           echo
           echo "Devices:"
           echo "- x64: 192.168.10.1"
@@ -229,7 +219,7 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: mixed-openwrt-build-${{ env.OPENWRT_VERSION }}-${{ env.IMMORTALWRT_VERSION }}
-        name: mixed-openwrt-build-${{ env.OPENWRT_VERSION }}-${{ env.IMMORTALWRT_VERSION }}
+        tag_name: immortalwrt-build-${{ env.IWRT_VERSION }}
+        name: immortalwrt-build-${{ env.IWRT_VERSION }}
         body_path: release.txt
         files: release-bundle/*

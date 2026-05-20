@@ -1,4 +1,4 @@
-name: Check Upstream Stable Releases
+name: Check ImmortalWrt Stable Release
 
 on:
   schedule:
@@ -24,38 +24,29 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v5
 
-    - name: Fetch latest stable releases
+    - name: Fetch latest stable release
       run: |
-        latest_immortalwrt="$(curl -fsSL https://downloads.immortalwrt.org/ | sed -n '/<h2>Stable Release<\/h2>/,/<hr \/>/p' | grep -oEm1 'ImmortalWrt [0-9]+\.[0-9]+\.[0-9]+' | awk '{print $2}')"
-        current_immortalwrt="$(tr -d '\n' < immortalwrt-version.txt)"
-        latest_openwrt="$(curl -fsSL https://openwrt.org/releases/start | grep -oEm1 'OpenWrt [0-9]+\.[0-9]+\.[0-9]+' | awk '{print $2}')"
-        current_openwrt="$(tr -d '\n' < openwrt-version.txt)"
-        echo "LATEST_IMMORTALWRT=${latest_immortalwrt}" >> "$GITHUB_ENV"
-        echo "CURRENT_IMMORTALWRT=${current_immortalwrt}" >> "$GITHUB_ENV"
-        echo "LATEST_OPENWRT=${latest_openwrt}" >> "$GITHUB_ENV"
-        echo "CURRENT_OPENWRT=${current_openwrt}" >> "$GITHUB_ENV"
-        if [ -z "${latest_immortalwrt}" ]; then
+        latest="$(curl -fsSL https://downloads.immortalwrt.org/ | sed -n '/<h2>Stable Release<\/h2>/,/<hr \/>/p' | grep -oEm1 'ImmortalWrt [0-9]+\.[0-9]+\.[0-9]+' | awk '{print $2}')"
+        current="$(tr -d '\n' < immortalwrt-version.txt)"
+        echo "LATEST_VERSION=${latest}" >> "$GITHUB_ENV"
+        echo "CURRENT_VERSION=${current}" >> "$GITHUB_ENV"
+        if [ -z "${latest}" ]; then
           echo "Failed to detect the current ImmortalWrt stable release."
           exit 1
         fi
-        if [ -z "${latest_openwrt}" ]; then
-          echo "Failed to detect the current OpenWrt stable release."
-          exit 1
-        fi
-        if [ "${latest_immortalwrt}" = "${current_immortalwrt}" ] && [ "${latest_openwrt}" = "${current_openwrt}" ]; then
+        if [ "${latest}" = "${current}" ]; then
           echo "No update detected."
           exit 0
         fi
-        echo "${latest_immortalwrt}" > immortalwrt-version.txt
-        echo "${latest_openwrt}" > openwrt-version.txt
+        echo "${latest}" > immortalwrt-version.txt
 
     - name: Commit updated version
       run: |
-        if [ "${LATEST_IMMORTALWRT}" = "${CURRENT_IMMORTALWRT}" ] && [ "${LATEST_OPENWRT}" = "${CURRENT_OPENWRT}" ]; then
+        if [ "${LATEST_VERSION}" = "${CURRENT_VERSION}" ]; then
           exit 0
         fi
         git config user.name "github-actions[bot]"
         git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-        git add immortalwrt-version.txt openwrt-version.txt
-        git commit -m "Update upstream versions"
+        git add immortalwrt-version.txt
+        git commit -m "Update ImmortalWrt to ${LATEST_VERSION}"
         git push
