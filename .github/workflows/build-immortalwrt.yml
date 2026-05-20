@@ -152,7 +152,7 @@ jobs:
         echo "FILE_DATE=_$(date +"%Y%m%d%H%M")" >> "$GITHUB_ENV"
         manifest="$(find bin/targets -name '*.manifest' | head -n 1)"
         if [ -n "$manifest" ]; then
-          kernelv="$(grep '^kernel - ' "$manifest" | awk '{print $3}' | head -n 1)"
+          kernelv="$(grep '^kernel - ' "$manifest" | awk '{print $3}' | head -n 1 || true)"
           [ -n "$kernelv" ] && echo "kernel_version=$kernelv" >> "$GITHUB_OUTPUT"
         fi
 
