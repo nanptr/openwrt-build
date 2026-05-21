@@ -1,4 +1,4 @@
-name: Build ImmortalWrt x64 / NanoPi R6C
+name: Build ImmortalWrt NanoPi R6C
 
 on:
   push:
@@ -7,9 +7,7 @@ on:
     paths:
       - immortalwrt-version.txt
       - configs/iwrt-nanopi-r6c.config
-      - configs/iwrt-x64.config
       - files/**
-      - files-x64/**
       - .github/workflows/build-immortalwrt.yml
       - README.md
   workflow_dispatch:
@@ -28,14 +26,6 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - title: x64
-            artifact_name: firmware-x64
-            config_file: configs/iwrt-x64.config
-            custom_files_dir: files-x64
-            repo_url: https://github.com/immortalwrt/immortalwrt
-            version_file: immortalwrt-version.txt
-            source_name: ImmortalWrt
-            extra_feeds: ""
           - title: NanoPi R6C
             artifact_name: firmware-nanopi-r6c
             config_file: configs/iwrt-nanopi-r6c.config
@@ -201,12 +191,11 @@ jobs:
     - name: Generate release notes
       run: |
         {
-          echo "ImmortalWrt x64 / NanoPi R6C"
+          echo "ImmortalWrt NanoPi R6C"
           echo
           echo "Version: ${IWRT_VERSION}"
           echo
           echo "Devices:"
-          echo "- x64: 192.168.10.1"
           echo "- NanoPi R6C: 192.168.11.1"
           echo
           echo "Build mode: full source build"
