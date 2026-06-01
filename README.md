@@ -24,11 +24,17 @@ GitHub Actions based full source build workflow for `FriendlyARM NanoPi R6C`.
 - `docker`, `dockerd`, `docker-compose`
 - `coremark` with the stock ImmortalWrt `/etc/coremark.sh`
 - Docker cgroup compatibility options enabled in kernel config
+- `dnsmasq-full`
+- `luci-app-mosdns`
 - `zerotier`
 - `luci-app-diskman`
 - `luci-app-homeproxy`
+- `luci-app-nikki`
+- `mihomo-meta`
 - `luci-app-dockerman`
 - `luci-app-ttyd`
+- `ddns-scripts` and common provider integrations
+- Transparent proxy kernel modules: `kmod-tun`, `kmod-nf-socket`, `kmod-nft-socket`, `kmod-nft-tproxy`
 - `kmod-rtc-pcf8563`, `hwclock`
 - Storage utilities for NVMe, partitioning, and ext4 management
 
@@ -53,6 +59,7 @@ GitHub Actions based full source build workflow for `FriendlyARM NanoPi R6C`.
 - The build workflow currently tracks the `openwrt-25.12` release series.
 - Docker support depends on the full build path because the NanoPi R6C image needs Docker-related cgroup kernel options, not just extra packages.
 - The firmware includes `nginx` as the LuCI web server and reverse-proxy entry point; site-specific `server` blocks are intended to be managed locally after deployment.
+- DNS, proxy, and ZeroTier package sources are aligned with the `sbwml` package variants used by `sbwml/builder` where applicable.
 
 ## Credits
 

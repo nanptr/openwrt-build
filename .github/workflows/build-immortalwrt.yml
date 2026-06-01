@@ -109,6 +109,20 @@ jobs:
         ./scripts/feeds update -a
         ./scripts/feeds install -a
 
+    - name: Replace sbwml package sources
+      run: |
+        cd openwrt
+        rm -rf feeds/packages/net/zerotier
+        git clone --depth=1 https://github.com/sbwml/feeds_packages_net_zerotier feeds/packages/net/zerotier
+
+        rm -rf feeds/packages/net/xray-core \
+               feeds/packages/net/v2ray-core \
+               feeds/packages/net/v2ray-geodata \
+               feeds/packages/net/sing-box
+        git clone --depth=1 -b v5 https://github.com/sbwml/openwrt_helloworld package/new/helloworld
+
+        git clone --depth=1 -b v5 https://github.com/sbwml/luci-app-mosdns package/new/mosdns
+
     - name: Load custom files and config
       run: |
         if [ -d "${{ matrix.custom_files_dir }}" ]; then
