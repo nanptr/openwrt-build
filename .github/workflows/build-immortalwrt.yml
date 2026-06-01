@@ -1,0 +1,214 @@
+name: Build ImmortalWrt NanoPi R6C
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - immortalwrt-version.txt
+      - configs/iwrt-nanopi-r6c.config
+      - files/**
+      - .github/workflows/build-immortalwrt.yml
+      - README.md
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: build-immortalwrt-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - title: NanoPi R6C
+            artifact_name: firmware-nanopi-r6c
+            config_file: configs/iwrt-nanopi-r6c.config
+            custom_files_dir: files
+            repo_url: https://github.com/immortalwrt/immortalwrt
+            version_file: immortalwrt-version.txt
+            source_name: ImmortalWrt
+            extra_feeds: ""
+
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+      CONFIG_FILE: ${{ matrix.config_file }}
+      TZ: Asia/Shanghai
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v5
+
+    - name: Load Source Version
+      run: |
+        echo "SOURCE_VERSION=$(tr -d '\n' < '${{ matrix.version_file }}')" >> "$GITHUB_ENV"
+
+    - name: Select source branch
+      run: |
+        branch=""
+        case "${SOURCE_VERSION}" in
+          24.*)
+            branch="openwrt-24.10"
+            ;;
+          25.*)
+            branch="openwrt-25.12"
+            ;;
+          *)
+            echo "Unsupported source version series: ${SOURCE_VERSION}"
+            exit 1
+            ;;
+        esac
+        echo "REPO_BRANCH=${branch}" >> "$GITHUB_ENV"
+        echo "Using ${{ matrix.source_name }} source branch ${branch}"
+
+    - name: Initialize environment
+      env:
+        DEBIAN_FRONTEND: noninteractive
+      run: |
+        sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc
+        sudo -E apt-get -qq update
+        sudo -E apt-get -qq install \
+          ack antlr3 asciidoc autoconf automake autopoint binutils bison build-essential \
+          bzip2 ccache clang cmake cpio curl device-tree-compiler ecj fastjar flex gawk \
+          gettext gcc-multilib g++-multilib gnutls-dev gperf haveged help2man intltool \
+          lib32gcc-s1 libc6-dev-i386 libelf-dev libglib2.0-dev libgmp3-dev libltdl-dev \
+          libmpc-dev libmpfr-dev libncurses-dev libpython3-dev libreadline-dev libssl-dev \
+          libtool libyaml-dev libz-dev lld llvm lrzsz mkisofs msmtp ninja-build p7zip \
+          p7zip-full patch pkgconf python3 python3-pyelftools python3-setuptools qemu-utils \
+          rsync scons squashfs-tools subversion swig texinfo uglifyjs unzip wget xxd zlib1g-dev
+        sudo -E apt-get -qq autoremove --purge
+        sudo -E apt-get -qq clean
+        sudo timedatectl set-timezone "$TZ"
+        sudo mkdir -p /workdir
+        sudo chown "$USER:$USER" /workdir
+
+    - name: Clone Source Tree
+      working-directory: /workdir
+      run: |
+        git clone --filter=blob:none --single-branch -b "$REPO_BRANCH" "${{ matrix.repo_url }}" openwrt
+        cd openwrt
+        if git ls-remote --exit-code --tags origin "v${SOURCE_VERSION}" >/dev/null 2>&1; then
+          git fetch --depth=1 origin "refs/tags/v${SOURCE_VERSION}:refs/tags/v${SOURCE_VERSION}"
+          git checkout -q "v${SOURCE_VERSION}"
+        else
+          echo "Tag v${SOURCE_VERSION} not found, using branch ${REPO_BRANCH}."
+        fi
+        ln -sf /workdir/openwrt "$GITHUB_WORKSPACE/openwrt"
+
+    - name: Configure feeds
+      run: |
+        cd openwrt
+        if [ -n "${{ matrix.extra_feeds }}" ]; then
+          printf '%s\n' "${{ matrix.extra_feeds }}" >> feeds.conf.default
+        fi
+    - name: Update and install feeds
+      run: |
+        cd openwrt
+        ./scripts/feeds update -a
+        ./scripts/feeds install -a
+
+    - name: Load custom files and config
+      run: |
+        if [ -d "${{ matrix.custom_files_dir }}" ]; then
+          mkdir -p openwrt/files
+          cp -a "${{ matrix.custom_files_dir }}"/. openwrt/files/
+        fi
+        cp "$CONFIG_FILE" openwrt/.config
+        cd openwrt
+        unset FILES FILES_DIR
+        make defconfig
+        grep -E 'CONFIG_TARGET_|CONFIG_PACKAGE_(dockerd|docker|docker-compose|nginx-ssl|luci-ssl-nginx)|CONFIG_KERNEL_CGROUP_DEVICE|CONFIG_DOCKER_CGROUP_OPTIONS' .config
+
+    - name: Download packages
+      run: |
+        cd openwrt
+        unset FILES FILES_DIR
+        make download -j"$(nproc)"
+        find dl -size -1024c -exec rm -f {} \;
+
+    - name: Build firmware
+      id: build
+      run: |
+        cd openwrt
+        unset FILES FILES_DIR
+        make -j"$(nproc)" || make -j1 V=s
+        grep '^CONFIG_TARGET.*DEVICE.*=y' .config | sed -r 's/.*DEVICE_(.*)=y/\1/' > DEVICE_NAME || true
+        [ -s DEVICE_NAME ] && echo "DEVICE_NAME=_$(cat DEVICE_NAME)" >> "$GITHUB_ENV"
+        echo "FILE_DATE=_$(date +"%Y%m%d%H%M")" >> "$GITHUB_ENV"
+        manifest="$(find bin/targets -name '*.manifest' | head -n 1)"
+        if [ -n "$manifest" ]; then
+          kernelv="$(grep '^kernel - ' "$manifest" | awk '{print $3}' | head -n 1 || true)"
+          [ -n "$kernelv" ] && echo "kernel_version=$kernelv" >> "$GITHUB_OUTPUT"
+        fi
+
+    - name: Organize firmware
+      run: |
+        cd openwrt/bin/targets/*/*
+        rm -rf packages
+        echo "FIRMWARE=$PWD" >> "$GITHUB_ENV"
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ matrix.artifact_name }}
+        path: ${{ env.FIRMWARE }}/*
+
+  release:
+    needs: build
+    runs-on: ubuntu-24.04
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v5
+
+    - name: Load ImmortalWrt version
+      run: |
+        echo "IWRT_VERSION=$(tr -d '\n' < immortalwrt-version.txt)" >> "$GITHUB_ENV"
+
+    - name: Download build artifacts
+      uses: actions/download-artifact@v4
+      with:
+        path: release-assets
+
+    - name: Normalize release asset names
+      run: |
+        mkdir -p release-bundle
+        for dir in release-assets/*; do
+          [ -d "$dir" ] || continue
+          device="$(basename "$dir" | sed 's/^firmware-//')"
+          for file in "$dir"/*; do
+            [ -f "$file" ] || continue
+            base="$(basename "$file")"
+            cp "$file" "release-bundle/${device}-${base}"
+          done
+        done
+
+    - name: Generate release notes
+      run: |
+        {
+          echo "ImmortalWrt NanoPi R6C"
+          echo
+          echo "Version: ${IWRT_VERSION}"
+          echo
+          echo "Devices:"
+          echo "- NanoPi R6C: 192.168.11.1"
+          echo
+          echo "Build mode: full source build"
+          echo "Docker cgroup options: enabled"
+          echo "Nginx: included"
+        } > release.txt
+
+    - name: Upload release
+      uses: softprops/action-gh-release@v2
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: immortalwrt-build-${{ env.IWRT_VERSION }}
+        name: immortalwrt-build-${{ env.IWRT_VERSION }}
+        body_path: release.txt
+        files: release-bundle/*

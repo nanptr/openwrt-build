@@ -1,0 +1,28 @@
+#!/bin/sh
+
+uci -q batch <<'EOF'
+set network.lan.ipaddr='192.168.11.1'
+
+delete firewall.zerotier
+set firewall.zerotier=zone
+set firewall.zerotier.name='zerotier'
+add_list firewall.zerotier.device='ztyous6nse'
+set firewall.zerotier.input='ACCEPT'
+set firewall.zerotier.output='ACCEPT'
+set firewall.zerotier.forward='ACCEPT'
+
+delete firewall.lan_to_zerotier
+set firewall.lan_to_zerotier=forwarding
+set firewall.lan_to_zerotier.src='lan'
+set firewall.lan_to_zerotier.dest='zerotier'
+
+delete firewall.zerotier_to_lan
+set firewall.zerotier_to_lan=forwarding
+set firewall.zerotier_to_lan.src='zerotier'
+set firewall.zerotier_to_lan.dest='lan'
+
+commit network
+commit firewall
+EOF
+
+exit 0
