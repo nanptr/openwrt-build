@@ -50,16 +50,13 @@ jobs:
 
     - name: Select source branch
       run: |
-        branch=""
         case "${SOURCE_VERSION}" in
-          24.*)
-            branch="openwrt-24.10"
-            ;;
           25.*)
             branch="openwrt-25.12"
             ;;
           *)
             echo "Unsupported source version series: ${SOURCE_VERSION}"
+            echo "This repository currently tracks only the openwrt-25.12 release series."
             exit 1
             ;;
         esac
