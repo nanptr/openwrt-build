@@ -115,6 +115,7 @@ jobs:
         rm -rf feeds/packages/net/zerotier
         git clone --depth=1 https://github.com/sbwml/feeds_packages_net_zerotier feeds/packages/net/zerotier
 
+        rm -rf feeds/packages/net/mosdns
         rm -rf feeds/packages/net/xray-core \
                feeds/packages/net/v2ray-core \
                feeds/packages/net/v2ray-geodata \
