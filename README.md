@@ -46,7 +46,7 @@ GitHub Actions based full source build workflow for `FriendlyARM NanoPi R6C`.
 - Workflow: `.github/workflows/build-immortalwrt.yml`
 - Trigger: `workflow_dispatch` and automatic rebuild when `immortalwrt-version.txt`, build config, or custom files change
 - Upstream checker: `.github/workflows/check-upstream-release.yml`
-- Schedule: daily, only commits when a new stable ImmortalWrt release is detected
+- Schedule: every 2 days, only commits when a new stable ImmortalWrt release is detected
 - Release target: GitHub Releases
 - Release asset names are normalized as `<device>-<original filename>`
 
