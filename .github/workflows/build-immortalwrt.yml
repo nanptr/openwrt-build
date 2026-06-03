@@ -25,6 +25,7 @@ jobs:
     outputs:
       source_revision: ${{ steps.source-meta.outputs.source_revision }}
       source_revision_short: ${{ steps.source-meta.outputs.source_revision_short }}
+      ota_version: ${{ steps.ota-version.outputs.ota_version }}
     strategy:
       fail-fast: false
       matrix:
@@ -108,6 +109,14 @@ jobs:
         source_revision_short="${source_revision%%-*}"
         echo "source_revision=${source_revision}" >> "$GITHUB_OUTPUT"
         echo "source_revision_short=${source_revision_short}" >> "$GITHUB_OUTPUT"
+
+    - name: Set OTA version
+      id: ota-version
+      run: |
+        ota_version="${SOURCE_VERSION}-r${GITHUB_RUN_NUMBER}"
+        echo "ota_version=${ota_version}" >> "$GITHUB_OUTPUT"
+        mkdir -p files/etc
+        printf '%s\n' "${ota_version}" > files/etc/ota_version
 
     - name: Configure feeds
       run: |
@@ -233,7 +242,7 @@ jobs:
 
     - name: Generate OTA metadata
       env:
-        OTA_VERSION_KEY: ${{ env.IWRT_VERSION }}-${{ needs.build.outputs.source_revision_short }}
+        OTA_VERSION_KEY: ${{ needs.build.outputs.ota_version }}
         OTA_RELEASES_URL: https://github.com/${{ github.repository }}/releases
         OTA_DOWNLOAD_BASE: https://github.com/${{ github.repository }}/releases/latest/download
       run: |

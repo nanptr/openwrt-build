@@ -94,9 +94,13 @@ prepare_check() {
     local line
     local release revision current latest more_url
 
-    release="$(grep "DISTRIB_RELEASE=" /etc/openwrt_release | sed -E "s/.*'(.+)'.*/\1/")"
-    revision="$(grep "DISTRIB_REVISION=" /etc/openwrt_release | sed -E "s/.*'(.+)'.*/\1/" | cut -d'-' -f1)"
-    current="$release-$revision"
+    if [ -s /etc/ota_version ]; then
+        current="$(cat /etc/ota_version)"
+    else
+        release="$(grep "DISTRIB_RELEASE=" /etc/openwrt_release | sed -E "s/.*'(.+)'.*/\1/")"
+        revision="$(grep "DISTRIB_REVISION=" /etc/openwrt_release | sed -E "s/.*'(.+)'.*/\1/" | cut -d'-' -f1)"
+        current="$release-$revision"
+    fi
     latest=0
     more_url="${OTA_RELEASES_URL:-$OTA_URL_BASE}"
 

@@ -58,7 +58,7 @@ GitHub Actions based full source build workflow for `FriendlyARM NanoPi R6C`.
 ## Notes
 - This repository now builds full firmware images instead of using `ImageBuilder`, so kernel options can be changed together with package selection.
 - The build workflow currently tracks the `openwrt-25.12` release series.
-- LuCI OTA is wired to GitHub Releases `latest/download` for NanoPi R6C online upgrade checks.
+- LuCI OTA is wired to GitHub Releases `latest/download` for NanoPi R6C online upgrade checks, using `25.12.x-r<run_number>` style build keys so same-version rebuilds are still detected.
 - Docker support depends on the full build path because the NanoPi R6C image needs Docker-related cgroup kernel options, not just extra packages.
 - The firmware includes `nginx` as the LuCI web server and reverse-proxy entry point; site-specific `server` blocks are intended to be managed locally after deployment.
 - DNS, proxy, and ZeroTier package sources are aligned with the `sbwml` package variants used by `sbwml/builder` where applicable.
