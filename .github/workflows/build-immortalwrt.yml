@@ -22,6 +22,9 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-24.04
+    outputs:
+      source_revision: ${{ steps.source-meta.outputs.source_revision }}
+      source_revision_short: ${{ steps.source-meta.outputs.source_revision_short }}
     strategy:
       fail-fast: false
       matrix:
@@ -97,6 +100,15 @@ jobs:
         fi
         ln -sf /workdir/openwrt "$GITHUB_WORKSPACE/openwrt"
 
+    - name: Detect source revision
+      id: source-meta
+      run: |
+        cd openwrt
+        source_revision="$(./scripts/getver.sh)"
+        source_revision_short="${source_revision%%-*}"
+        echo "source_revision=${source_revision}" >> "$GITHUB_OUTPUT"
+        echo "source_revision_short=${source_revision_short}" >> "$GITHUB_OUTPUT"
+
     - name: Configure feeds
       run: |
         cd openwrt
@@ -123,6 +135,10 @@ jobs:
         git clone --depth=1 -b v5 https://github.com/sbwml/openwrt_helloworld package/new/helloworld
 
         git clone --depth=1 -b v5 https://github.com/sbwml/luci-app-mosdns package/new/mosdns
+        rm -rf package/new/ota-feed package/new/luci-app-ota
+        git clone --depth=1 https://github.com/breeze303/luci-app-ota package/new/ota-feed
+        mv package/new/ota-feed/luci-app-ota package/new/luci-app-ota
+        rm -rf package/new/ota-feed
 
     - name: Load custom files and config
       run: |
@@ -215,12 +231,51 @@ jobs:
           echo "Nginx: included"
         } > release.txt
 
+    - name: Generate OTA metadata
+      env:
+        OTA_VERSION_KEY: ${{ env.IWRT_VERSION }}-${{ needs.build.outputs.source_revision_short }}
+        OTA_RELEASES_URL: https://github.com/${{ github.repository }}/releases
+        OTA_DOWNLOAD_BASE: https://github.com/${{ github.repository }}/releases/latest/download
+      run: |
+        sysupgrade="$(find release-bundle -maxdepth 1 -type f -name 'nanopi-r6c-*squashfs-sysupgrade*.img.gz' | head -n 1)"
+        if [ -z "$sysupgrade" ]; then
+          echo "Unable to locate NanoPi R6C sysupgrade image in release-bundle."
+          exit 1
+        fi
+        sysupgrade_name="$(basename "$sysupgrade")"
+        sha256="$(sha256sum "$sysupgrade" | awk '{print $1}')"
+        build_date="$(TZ=Asia/Shanghai date '+%Y-%m-%d %H:%M:%S')"
+
+        printf '[%s](%s)\nSHA256: %s\nBuild date: %s\n' \
+          "${OTA_VERSION_KEY}" "${sysupgrade_name}" "${sha256}" "${build_date}" \
+          > release-bundle/version.latest
+
+        printf '%s\n' "${OTA_VERSION_KEY}" > release-bundle/version.index
+        cp release.txt "release-bundle/${OTA_VERSION_KEY}.log"
+
+        printf '%s\n' \
+          "<br><a href=\"${OTA_RELEASES_URL}\" target=\"_blank\" rel=\"noopener noreferrer\">GitHub Releases</a>" \
+          > release-bundle/ota.footer.html
+
+        printf '%s\n' \
+          '{' \
+          '  "friendlyarm,nanopi-r6c": [' \
+          '    {' \
+          "      \"build_date\": \"${build_date}\"," \
+          "      \"version\": \"${OTA_VERSION_KEY}\"," \
+          "      \"sha256sum\": \"${sha256}\"," \
+          "      \"url\": \"${OTA_DOWNLOAD_BASE}/${sysupgrade_name}\"" \
+          '    }' \
+          '  ]' \
+          '}' \
+          > release-bundle/fw.json
+
     - name: Upload release
       uses: softprops/action-gh-release@v2
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: immortalwrt-build-${{ env.IWRT_VERSION }}
-        name: immortalwrt-build-${{ env.IWRT_VERSION }}
+        tag_name: immortalwrt-v${{ env.IWRT_VERSION }}
+        name: immortalwrt-v${{ env.IWRT_VERSION }}
         body_path: release.txt
         files: release-bundle/*

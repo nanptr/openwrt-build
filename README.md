@@ -48,6 +48,7 @@ GitHub Actions based full source build workflow for `FriendlyARM NanoPi R6C`.
 - Upstream checker: `.github/workflows/check-upstream-release.yml`
 - Schedule: every 2 days, only commits when a new stable ImmortalWrt release is detected
 - Release target: GitHub Releases
+- OTA metadata assets: `version.latest`, `version.index`, `fw.json`, and release changelog files are published alongside firmware images
 - Release asset names are normalized as `<device>-<original filename>`
 
 ## Secrets
@@ -57,6 +58,7 @@ GitHub Actions based full source build workflow for `FriendlyARM NanoPi R6C`.
 ## Notes
 - This repository now builds full firmware images instead of using `ImageBuilder`, so kernel options can be changed together with package selection.
 - The build workflow currently tracks the `openwrt-25.12` release series.
+- LuCI OTA is wired to GitHub Releases `latest/download` for NanoPi R6C online upgrade checks.
 - Docker support depends on the full build path because the NanoPi R6C image needs Docker-related cgroup kernel options, not just extra packages.
 - The firmware includes `nginx` as the LuCI web server and reverse-proxy entry point; site-specific `server` blocks are intended to be managed locally after deployment.
 - DNS, proxy, and ZeroTier package sources are aligned with the `sbwml` package variants used by `sbwml/builder` where applicable.
