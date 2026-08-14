@@ -6,6 +6,7 @@ on:
   workflow_dispatch:
 
 permissions:
+  actions: write
   contents: write
 
 concurrency:
@@ -22,7 +23,7 @@ jobs:
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v5
+      uses: actions/checkout@v6
 
     - name: Fetch latest stable release
       run: |
@@ -50,3 +51,9 @@ jobs:
         git add immortalwrt-version.txt
         git commit -m "Update ImmortalWrt to ${LATEST_VERSION}"
         git push
+
+    - name: Trigger firmware build
+      if: env.LATEST_VERSION != env.CURRENT_VERSION
+      env:
+        GH_TOKEN: ${{ github.token }}
+      run: gh workflow run build-immortalwrt.yml --ref main

@@ -27,7 +27,7 @@ fcurl() {
 download() {
     local img="$1"
     local sum="$2"
-    local pid url
+    local pid url wait_status
 
     exec 300>"$STLOCK"
     flock 300
@@ -73,8 +73,9 @@ download() {
 
         echo "Checksum failed!" >> /tmp/firmware.img.progress
     else
+        wait_status=$?
         echo >> /tmp/firmware.img.progress
-        if [ $? -eq 143 ]; then
+        if [ "$wait_status" -eq 143 ]; then
             echo "Canceled!" >> /tmp/firmware.img.progress
         fi
     fi
@@ -92,7 +93,7 @@ lock_download() {
 
 prepare_check() {
     local line
-    local release revision current latest more_url
+    local release revision current latest latest_version more_url
 
     if [ -s /etc/ota_version ]; then
         current="$(cat /etc/ota_version)"
@@ -110,7 +111,8 @@ prepare_check() {
         return 255
     }
 
-    if head -1 /var/run/ota/ota.latest | grep -Fq "$current"; then
+    latest_version="$(sed -n '1s/^\[\([^]]*\)\].*$/\1/p' /var/run/ota/ota.latest)"
+    if [ -n "$latest_version" ] && [ "$latest_version" = "$current" ]; then
         latest=1
         current=""
     fi

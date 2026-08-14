@@ -46,7 +46,7 @@ jobs:
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v5
+      uses: actions/checkout@v6
 
     - name: Load Source Version
       run: |
@@ -190,7 +190,7 @@ jobs:
         echo "FIRMWARE=$PWD" >> "$GITHUB_ENV"
 
     - name: Upload artifact
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: ${{ matrix.artifact_name }}
         path: ${{ env.FIRMWARE }}/*
@@ -201,14 +201,14 @@ jobs:
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v5
+      uses: actions/checkout@v6
 
     - name: Load ImmortalWrt version
       run: |
         echo "IWRT_VERSION=$(tr -d '\n' < immortalwrt-version.txt)" >> "$GITHUB_ENV"
 
     - name: Download build artifacts
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v8
       with:
         path: release-assets
 
@@ -280,7 +280,7 @@ jobs:
           > release-bundle/fw.json
 
     - name: Upload release
-      uses: softprops/action-gh-release@v2
+      uses: softprops/action-gh-release@v3
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
