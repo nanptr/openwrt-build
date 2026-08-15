@@ -32,7 +32,7 @@ GitHub Actions based full source build workflow for `FriendlyARM NanoPi R6C`.
 - `luci-app-nikki`
 - `mihomo-meta`
 - `luci-app-dockerman`
-- `luci-app-ttyd`
+- `luci-app-ttyd` through the same-origin `/ttyd/` HTTPS reverse proxy
 - `ddns-scripts` and common provider integrations
 - Transparent proxy kernel modules: `kmod-tun`, `kmod-nf-socket`, `kmod-nft-socket`, `kmod-nft-tproxy`
 - `kmod-rtc-pcf8563`, `hwclock`
@@ -41,6 +41,7 @@ GitHub Actions based full source build workflow for `FriendlyARM NanoPi R6C`.
 ## Custom Files
 - R6C: `files/etc/uci-defaults/99-nanopi-r6c-defaults`
 - R6C default LAN IP: `192.168.10.1`
+- ttyd: loopback-only on `127.0.0.1:7681`, proxied by nginx at `/ttyd/`
 
 ## GitHub Actions
 - Workflow: `.github/workflows/build-immortalwrt.yml`
@@ -60,7 +61,7 @@ GitHub Actions based full source build workflow for `FriendlyARM NanoPi R6C`.
 - The build workflow currently tracks the `openwrt-25.12` release series.
 - LuCI OTA is wired to GitHub Releases `latest/download` for NanoPi R6C online upgrade checks, using `25.12.x-r<run_number>` style build keys so same-version rebuilds are still detected.
 - Docker support depends on the full build path because the NanoPi R6C image needs Docker-related cgroup kernel options, not just extra packages.
-- The firmware includes `nginx` as the LuCI web server and reverse-proxy entry point; site-specific `server` blocks are intended to be managed locally after deployment.
+- The firmware includes `nginx` as the LuCI web server and reverse-proxy entry point. The ttyd backend is not exposed directly to the LAN; set a root password after installation because the `/ttyd/` proxy does not inherit LuCI session authentication.
 - DNS, proxy, and ZeroTier package sources are aligned with the `sbwml` package variants used by `sbwml/builder` where applicable.
 
 ## Credits

@@ -3,6 +3,11 @@
 uci -q batch <<'EOF'
 set network.lan.ipaddr='192.168.10.1/24'
 
+set ttyd.@ttyd[0].interface='127.0.0.1'
+set ttyd.@ttyd[0].port='7681'
+set ttyd.@ttyd[0].url_override='/ttyd/'
+set ttyd.@ttyd[0].check_origin='1'
+
 delete firewall.zerotier
 set firewall.zerotier=zone
 set firewall.zerotier.name='zerotier'
@@ -23,6 +28,7 @@ set firewall.zerotier_to_lan.dest='lan'
 
 commit network
 commit firewall
+commit ttyd
 EOF
 
 exit 0
