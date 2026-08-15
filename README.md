@@ -40,7 +40,7 @@ GitHub Actions based full source build workflow for `FriendlyARM NanoPi R6C`.
 
 ## Custom Files
 - R6C: `files/etc/uci-defaults/99-nanopi-r6c-defaults`
-- R6C default LAN IP: `192.168.11.1`
+- R6C default LAN IP: `192.168.10.1`
 
 ## GitHub Actions
 - Workflow: `.github/workflows/build-immortalwrt.yml`

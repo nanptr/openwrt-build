@@ -210,20 +210,25 @@ jobs:
     - name: Download build artifacts
       uses: actions/download-artifact@v8
       with:
+        name: firmware-nanopi-r6c
         path: release-assets
 
     - name: Normalize release asset names
+      env:
+        RELEASE_DEVICE: nanopi-r6c
       run: |
         mkdir -p release-bundle
-        for dir in release-assets/*; do
-          [ -d "$dir" ] || continue
-          device="$(basename "$dir" | sed 's/^firmware-//')"
-          for file in "$dir"/*; do
-            [ -f "$file" ] || continue
-            base="$(basename "$file")"
-            cp "$file" "release-bundle/${device}-${base}"
-          done
+        copied=0
+        for file in release-assets/*; do
+          [ -f "$file" ] || continue
+          base="$(basename "$file")"
+          cp "$file" "release-bundle/${RELEASE_DEVICE}-${base}"
+          copied=1
         done
+        if [ "$copied" -eq 0 ]; then
+          echo "No firmware files found in release-assets."
+          exit 1
+        fi
 
     - name: Generate release notes
       run: |
@@ -233,7 +238,7 @@ jobs:
           echo "Version: ${IWRT_VERSION}"
           echo
           echo "Devices:"
-          echo "- NanoPi R6C: 192.168.11.1"
+          echo "- NanoPi R6C: 192.168.10.1"
           echo
           echo "Build mode: full source build"
           echo "Docker cgroup options: enabled"
