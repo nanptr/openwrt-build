@@ -25,7 +25,6 @@ GitHub Actions based full source build workflow for `FriendlyARM NanoPi R6C`.
 - `coremark` with the stock ImmortalWrt `/etc/coremark.sh`
 - Docker cgroup compatibility options enabled in kernel config
 - `dnsmasq-full`
-- `luci-app-mosdns`
 - `zerotier`
 - `luci-app-diskman`
 - `luci-app-homeproxy`

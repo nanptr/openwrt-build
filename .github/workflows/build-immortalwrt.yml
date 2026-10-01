@@ -136,14 +136,12 @@ jobs:
         rm -rf feeds/packages/net/zerotier
         git clone --depth=1 https://github.com/sbwml/feeds_packages_net_zerotier feeds/packages/net/zerotier
 
-        rm -rf feeds/packages/net/mosdns
         rm -rf feeds/packages/net/xray-core \
                feeds/packages/net/v2ray-core \
                feeds/packages/net/v2ray-geodata \
                feeds/packages/net/sing-box
         git clone --depth=1 -b v5 https://github.com/sbwml/openwrt_helloworld package/new/helloworld
 
-        git clone --depth=1 -b v5 https://github.com/sbwml/luci-app-mosdns package/new/mosdns
         rm -rf package/new/ota-feed package/new/luci-app-ota
         git clone --depth=1 https://github.com/breeze303/luci-app-ota package/new/ota-feed
         mv package/new/ota-feed/luci-app-ota package/new/luci-app-ota
