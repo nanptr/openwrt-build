@@ -38,7 +38,7 @@ jobs:
             repo_url: https://github.com/openwrt/openwrt
             version_file: openwrt-version.txt
             source_name: OpenWrt
-            extra_feeds: "src-git nikki https://github.com/morytyann/OpenWrt-mihomo.git"
+            extra_feeds: "src-git nikki https://github.com/nikkinikki-org/OpenWrt-nikki.git"
 
     env:
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
@@ -162,7 +162,7 @@ jobs:
         cd openwrt
         unset FILES FILES_DIR
         make defconfig
-        grep -E 'CONFIG_TARGET_|CONFIG_PACKAGE_(dockerd|docker|docker-compose|nginx-ssl|luci-nginx|mihomo-meta|luci-app-zerotier|luci-app-nikki)|CONFIG_LUCI_LANG_zh_Hans|CONFIG_KERNEL_CGROUP_DEVICE|CONFIG_DOCKER_CGROUP_OPTIONS' .config
+        grep -E 'CONFIG_TARGET_|CONFIG_PACKAGE_(dockerd|docker|docker-compose|nginx-ssl|luci-nginx|nikki|luci-app-zerotier|luci-app-nikki)|CONFIG_LUCI_LANG_zh_Hans|CONFIG_KERNEL_CGROUP_DEVICE|CONFIG_DOCKER_CGROUP_OPTIONS' .config
 
     - name: Download packages
       run: |

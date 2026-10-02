@@ -25,7 +25,7 @@ GitHub Actions based full source build workflow for `FriendlyARM NanoPi R6C`, ba
 - `coremark`
 - Docker cgroup compatibility options enabled in kernel config
 - `dnsmasq-full`
-- `luci-app-nikki` with `mihomo` (via the [OpenWrt-mihomo](https://github.com/morytyann/OpenWrt-mihomo) feed)
+- `luci-app-nikki` with `nikki` (via the [OpenWrt-nikki](https://github.com/nikkinikki-org/OpenWrt-nikki) feed)
 - `zerotier`
 - `luci-app-diskman` (via [sbwml/luci-app-diskman](https://github.com/sbwml/luci-app-diskman))
 - `luci-app-dockerman`
@@ -38,7 +38,7 @@ GitHub Actions based full source build workflow for `FriendlyARM NanoPi R6C`, ba
 ## Third-Party Package Sources
 The build uses only the four official OpenWrt feeds (packages, luci, routing, telephony) plus one extra feed:
 
-- `src-git nikki https://github.com/morytyann/OpenWrt-mihomo.git` — `luci-app-nikki` / `mihomo`
+- `src-git nikki https://github.com/nikkinikki-org/OpenWrt-nikki.git` — `luci-app-nikki` / `nikki`
 
 Additional packages are cloned directly into `package/new/` during the build:
 
