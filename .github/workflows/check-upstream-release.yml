@@ -1,4 +1,4 @@
-name: Check ImmortalWrt Stable Release
+name: Check OpenWrt Stable Release
 
 on:
   schedule:
@@ -27,19 +27,23 @@ jobs:
 
     - name: Fetch latest stable release
       run: |
-        latest="$(curl -fsSL https://downloads.immortalwrt.org/ | sed -n '/<h2>Stable Release<\/h2>/,/<hr \/>/p' | grep -oEm1 'ImmortalWrt [0-9]+\.[0-9]+\.[0-9]+' | awk '{print $2}')"
-        current="$(tr -d '\n' < immortalwrt-version.txt)"
+        latest="$(curl -fsSL 'https://api.github.com/repos/openwrt/openwrt/tags?per_page=100' \
+          | grep -oE '"name": "v25\.12\.[0-9]+"' \
+          | grep -oE '25\.12\.[0-9]+' \
+          | sort -t. -k3 -n \
+          | tail -1)"
+        current="$(tr -d '\n' < openwrt-version.txt)"
         echo "LATEST_VERSION=${latest}" >> "$GITHUB_ENV"
         echo "CURRENT_VERSION=${current}" >> "$GITHUB_ENV"
         if [ -z "${latest}" ]; then
-          echo "Failed to detect the current ImmortalWrt stable release."
+          echo "Failed to detect the current OpenWrt stable release."
           exit 1
         fi
         if [ "${latest}" = "${current}" ]; then
           echo "No update detected."
           exit 0
         fi
-        echo "${latest}" > immortalwrt-version.txt
+        echo "${latest}" > openwrt-version.txt
 
     - name: Commit updated version
       run: |
@@ -48,12 +52,12 @@ jobs:
         fi
         git config user.name "github-actions[bot]"
         git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-        git add immortalwrt-version.txt
-        git commit -m "Update ImmortalWrt to ${LATEST_VERSION}"
+        git add openwrt-version.txt
+        git commit -m "Update OpenWrt to ${LATEST_VERSION}"
         git push
 
     - name: Trigger firmware build
       if: env.LATEST_VERSION != env.CURRENT_VERSION
       env:
         GH_TOKEN: ${{ github.token }}
-      run: gh workflow run build-immortalwrt.yml --ref main
+      run: gh workflow run build-openwrt.yml --ref main

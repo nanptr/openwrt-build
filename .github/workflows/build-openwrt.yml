@@ -1,14 +1,14 @@
-name: Build ImmortalWrt NanoPi R6C
+name: Build OpenWrt NanoPi R6C
 
 on:
   push:
     branches:
       - main
     paths:
-      - immortalwrt-version.txt
-      - configs/iwrt-nanopi-r6c.config
+      - openwrt-version.txt
+      - configs/openwrt-nanopi-r6c.config
       - files/**
-      - .github/workflows/build-immortalwrt.yml
+      - .github/workflows/build-openwrt.yml
       - README.md
   workflow_dispatch:
 
@@ -16,7 +16,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: build-immortalwrt-${{ github.ref }}
+  group: build-openwrt-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -32,12 +32,12 @@ jobs:
         include:
           - title: NanoPi R6C
             artifact_name: firmware-nanopi-r6c
-            config_file: configs/iwrt-nanopi-r6c.config
+            config_file: configs/openwrt-nanopi-r6c.config
             custom_files_dir: files
-            repo_url: https://github.com/immortalwrt/immortalwrt
-            version_file: immortalwrt-version.txt
-            source_name: ImmortalWrt
-            extra_feeds: ""
+            repo_url: https://github.com/openwrt/openwrt
+            version_file: openwrt-version.txt
+            source_name: OpenWrt
+            extra_feeds: "src-git nikki https://github.com/morytyann/OpenWrt-mihomo.git"
 
     env:
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
@@ -130,18 +130,25 @@ jobs:
         ./scripts/feeds update -a
         ./scripts/feeds install -a
 
-    - name: Replace sbwml package sources
+    - name: Add third-party package sources
       run: |
         cd openwrt
+        # zerotier (sbwml fork)
         rm -rf feeds/packages/net/zerotier
         git clone --depth=1 https://github.com/sbwml/feeds_packages_net_zerotier feeds/packages/net/zerotier
 
-        rm -rf feeds/packages/net/xray-core \
-               feeds/packages/net/v2ray-core \
-               feeds/packages/net/v2ray-geodata \
-               feeds/packages/net/sing-box
-        git clone --depth=1 -b v5 https://github.com/sbwml/openwrt_helloworld package/new/helloworld
+        # luci-app-zerotier (not in official LuCI feed; sparse checkout from ImmortalWrt)
+        rm -rf package/new/iwrt-luci package/new/luci-app-zerotier
+        git clone --depth=1 --filter=blob:none --sparse https://github.com/immortalwrt/luci package/new/iwrt-luci
+        git -C package/new/iwrt-luci sparse-checkout set applications/luci-app-zerotier
+        mv package/new/iwrt-luci/applications/luci-app-zerotier package/new/luci-app-zerotier
+        rm -rf package/new/iwrt-luci
 
+        # luci-app-diskman (not in official LuCI feed)
+        rm -rf package/new/diskman
+        git clone --depth=1 https://github.com/sbwml/luci-app-diskman package/new/diskman
+
+        # luci-app-ota
         rm -rf package/new/ota-feed package/new/luci-app-ota
         git clone --depth=1 https://github.com/breeze303/luci-app-ota package/new/ota-feed
         mv package/new/ota-feed/luci-app-ota package/new/luci-app-ota
@@ -202,9 +209,9 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v6
 
-    - name: Load ImmortalWrt version
+    - name: Load OpenWrt version
       run: |
-        echo "IWRT_VERSION=$(tr -d '\n' < immortalwrt-version.txt)" >> "$GITHUB_ENV"
+        echo "OWRT_VERSION=$(tr -d '\n' < openwrt-version.txt)" >> "$GITHUB_ENV"
 
     - name: Download build artifacts
       uses: actions/download-artifact@v8
@@ -232,9 +239,9 @@ jobs:
     - name: Generate release notes
       run: |
         {
-          echo "ImmortalWrt NanoPi R6C"
+          echo "OpenWrt NanoPi R6C"
           echo
-          echo "Version: ${IWRT_VERSION}"
+          echo "Version: ${OWRT_VERSION}"
           echo
           echo "Devices:"
           echo "- NanoPi R6C: 192.168.10.1"
@@ -288,7 +295,7 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: immortalwrt-v${{ env.IWRT_VERSION }}
-        name: immortalwrt-v${{ env.IWRT_VERSION }}
+        tag_name: openwrt-v${{ env.OWRT_VERSION }}
+        name: openwrt-v${{ env.OWRT_VERSION }}
         body_path: release.txt
         files: release-bundle/*
