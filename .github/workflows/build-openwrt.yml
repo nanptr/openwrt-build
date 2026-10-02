@@ -134,10 +134,12 @@ jobs:
         git clone --depth=1 https://github.com/sbwml/feeds_packages_net_zerotier feeds/packages/net/zerotier
 
         # luci-app-zerotier (not in official LuCI feed; sparse checkout from ImmortalWrt)
-        rm -rf package/new/iwrt-luci package/new/luci-app-zerotier
+        # ../../luci.mk resolves to package/luci.mk, so keep it at package/ root
+        rm -rf package/new/iwrt-luci package/new/luci-app-zerotier package/luci.mk
         git clone --depth=1 --filter=blob:none --sparse https://github.com/immortalwrt/luci package/new/iwrt-luci
-        git -C package/new/iwrt-luci sparse-checkout set applications/luci-app-zerotier
+        git -C package/new/iwrt-luci sparse-checkout set --skip-checks applications/luci-app-zerotier luci.mk
         mv package/new/iwrt-luci/applications/luci-app-zerotier package/new/luci-app-zerotier
+        mv package/new/iwrt-luci/luci.mk package/luci.mk
         rm -rf package/new/iwrt-luci
 
         # luci-app-diskman (not in official LuCI feed)
@@ -160,7 +162,7 @@ jobs:
         cd openwrt
         unset FILES FILES_DIR
         make defconfig
-        grep -E 'CONFIG_TARGET_|CONFIG_PACKAGE_(dockerd|docker|docker-compose|nginx-ssl|luci-ssl-nginx)|CONFIG_KERNEL_CGROUP_DEVICE|CONFIG_DOCKER_CGROUP_OPTIONS' .config
+        grep -E 'CONFIG_TARGET_|CONFIG_PACKAGE_(dockerd|docker|docker-compose|nginx-ssl|luci-nginx|mihomo-meta|luci-app-zerotier|luci-app-nikki)|CONFIG_LUCI_LANG_zh_Hans|CONFIG_KERNEL_CGROUP_DEVICE|CONFIG_DOCKER_CGROUP_OPTIONS' .config
 
     - name: Download packages
       run: |

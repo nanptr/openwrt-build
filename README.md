@@ -20,7 +20,7 @@ GitHub Actions based full source build workflow for `FriendlyARM NanoPi R6C`, ba
 - Workflow: `.github/workflows/build-openwrt.yml`
 
 ## Included Features
-- LuCI on `nginx` via `luci-ssl-nginx`
+- LuCI on `nginx` via `luci-nginx` (nginx-util's default config already serves HTTPS on 443 with a self-signed certificate and redirects port 80)
 - `docker`, `dockerd`, `docker-compose`
 - `coremark`
 - Docker cgroup compatibility options enabled in kernel config
