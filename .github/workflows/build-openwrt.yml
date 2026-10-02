@@ -6,6 +6,7 @@ on:
       - main
     paths:
       - openwrt-version.txt
+      - openwrt-revision.txt
       - configs/openwrt-nanopi-r6c.config
       - files/**
       - .github/workflows/build-openwrt.yml
@@ -93,12 +94,7 @@ jobs:
       run: |
         git clone --filter=blob:none --single-branch -b "$REPO_BRANCH" "${{ matrix.repo_url }}" openwrt
         cd openwrt
-        if git ls-remote --exit-code --tags origin "v${SOURCE_VERSION}" >/dev/null 2>&1; then
-          git fetch --depth=1 origin "refs/tags/v${SOURCE_VERSION}:refs/tags/v${SOURCE_VERSION}"
-          git checkout -q "v${SOURCE_VERSION}"
-        else
-          echo "Tag v${SOURCE_VERSION} not found, using branch ${REPO_BRANCH}."
-        fi
+        echo "Building branch ${REPO_BRANCH} at $(git rev-parse HEAD)"
         ln -sf /workdir/openwrt "$GITHUB_WORKSPACE/openwrt"
 
     - name: Detect source revision

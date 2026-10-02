@@ -1,0 +1,64 @@
+name: Check OpenWrt Branch Updates
+
+on:
+  schedule:
+    - cron: '29 2 * * *'
+  workflow_dispatch:
+
+permissions:
+  actions: write
+  contents: write
+
+concurrency:
+  group: check-upstream-branch
+  cancel-in-progress: true
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+  TZ: Asia/Shanghai
+  UPSTREAM_REPO: https://github.com/openwrt/openwrt
+  UPSTREAM_BRANCH: openwrt-25.12
+  REVISION_FILE: openwrt-revision.txt
+
+jobs:
+  check:
+    runs-on: ubuntu-24.04
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v6
+
+    - name: Fetch upstream branch HEAD
+      run: |
+        latest="$(git ls-remote "${UPSTREAM_REPO}" "refs/heads/${UPSTREAM_BRANCH}" | awk '{print $1}')"
+        current="$(tr -d '\n' < "${REVISION_FILE}" 2>/dev/null || true)"
+        echo "LATEST_REVISION=${latest}" >> "$GITHUB_ENV"
+        echo "CURRENT_REVISION=${current}" >> "$GITHUB_ENV"
+        if [ -z "${latest}" ]; then
+          echo "Failed to resolve upstream branch ${UPSTREAM_BRANCH}."
+          exit 1
+        fi
+        echo "Upstream ${UPSTREAM_BRANCH}: ${latest}"
+        echo "Last built: ${current:-<none>}"
+        if [ "${latest}" = "${current}" ]; then
+          echo "No new commits."
+          exit 0
+        fi
+        echo "${latest}" > "${REVISION_FILE}"
+
+    - name: Commit updated revision
+      run: |
+        if [ "${LATEST_REVISION}" = "${CURRENT_REVISION}" ]; then
+          exit 0
+        fi
+        git config user.name "github-actions[bot]"
+        git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+        git add "${REVISION_FILE}"
+        git commit -m "Bump ${UPSTREAM_BRANCH} to ${LATEST_REVISION}"
+        git push
+
+    - name: Trigger firmware build
+      if: env.LATEST_REVISION != env.CURRENT_REVISION
+      env:
+        GH_TOKEN: ${{ github.token }}
+      run: gh workflow run build-openwrt.yml --ref main

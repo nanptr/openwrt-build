@@ -8,8 +8,8 @@ GitHub Actions based full source build workflow for `FriendlyARM NanoPi R6C`, ba
 
 ## Build Target
 - Source: official OpenWrt source tree (`github.com/openwrt/openwrt`)
-- Source branch: selected automatically from the OpenWrt stable version series
-- Preferred release selector: `openwrt-version.txt`
+- Source branch: `openwrt-25.12` branch HEAD, tracked via `openwrt-revision.txt`
+- Base version label (OTA/notes): `openwrt-version.txt`
 - R6C target: `rockchip/armv8`
 - R6C device: `friendlyarm_nanopi-r6c`
 - Rootfs partsize: `1024 MB`
@@ -57,8 +57,8 @@ Additional packages are cloned directly into `package/new/` during the build:
 ## GitHub Actions
 - Workflow: `.github/workflows/build-openwrt.yml`
 - Trigger: `workflow_dispatch` and automatic rebuild when `openwrt-version.txt`, build config, or custom files change
-- Upstream checker: `.github/workflows/check-upstream-release.yml`
-- Schedule: every 2 days, only commits when a new stable OpenWrt release is detected
+- Upstream checker: `.github/workflows/check-upstream-branch.yml`
+- Schedule: daily at 02:29 (Asia/Shanghai), rebuilds only when the `openwrt-25.12` branch has new commits
 - Release target: GitHub Releases
 - OTA metadata assets: `version.latest`, `version.index`, `fw.json`, and release changelog files are published alongside firmware images
 - Release asset names are normalized as `<device>-<original filename>`
