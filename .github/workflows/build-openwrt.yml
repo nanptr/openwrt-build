@@ -276,6 +276,10 @@ jobs:
 
         printf '%s\n' "${OTA_VERSION_KEY}" > release-bundle/version.index
 
+        # 更新日志：固件端 ota check 会拉取 ${OTA_VERSION_KEY}.log 显示 ChangeLog，
+        # 且只有最新版本的 log 会被读取，所以每个 Release 只保留这一份
+        cp release.txt "release-bundle/${OTA_VERSION_KEY}.log"
+
         printf '%s\n' \
           "<br><a href=\"${OTA_RELEASES_URL}\" target=\"_blank\" rel=\"noopener noreferrer\">GitHub Releases</a>" \
           > release-bundle/ota.footer.html
@@ -292,6 +296,17 @@ jobs:
           '  ]' \
           '}' \
           > release-bundle/fw.json
+
+    - name: Remove stale changelog logs from release
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        tag="openwrt-v${OWRT_VERSION}"
+        for f in $(gh release view "$tag" --repo "$GITHUB_REPOSITORY" \
+                     --json assets --jq '.assets[].name | select(endswith(".log"))'); do
+          echo "Removing stale asset: $f"
+          gh release delete-asset "$tag" "$f" --repo "$GITHUB_REPOSITORY" --yes
+        done
 
     - name: Upload release
       uses: softprops/action-gh-release@v3
