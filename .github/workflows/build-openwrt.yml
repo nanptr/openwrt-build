@@ -226,6 +226,12 @@ jobs:
         for file in release-assets/*; do
           [ -f "$file" ] || continue
           base="$(basename "$file")"
+          case "$base" in
+            # 只发布固件镜像和校验文件，跳过日志 / 构建信息 / 描述文件
+            *.img.gz|*sha256sums*) ;;
+            *.log|*.buildinfo|*.manifest|profiles.json) continue ;;
+            *) continue ;;
+          esac
           cp "$file" "release-bundle/${RELEASE_DEVICE}-${base}"
           copied=1
         done
@@ -269,7 +275,6 @@ jobs:
           > release-bundle/version.latest
 
         printf '%s\n' "${OTA_VERSION_KEY}" > release-bundle/version.index
-        cp release.txt "release-bundle/${OTA_VERSION_KEY}.log"
 
         printf '%s\n' \
           "<br><a href=\"${OTA_RELEASES_URL}\" target=\"_blank\" rel=\"noopener noreferrer\">GitHub Releases</a>" \
