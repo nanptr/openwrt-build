@@ -124,7 +124,11 @@ prepare_check() {
             break
         fi
         echo "<h3>${line}</h3><pre>" >> /var/run/ota/ota.log
-        fcurl --connect-timeout 10 "$OTA_URL_BASE/${line}.log" >> /var/run/ota/ota.log 2>/dev/null
+        # 固定文件名：Release 中始终只维护一份 changelog.log
+        if [ -z "${changelog_fetched:-}" ]; then
+            fcurl --connect-timeout 10 "$OTA_URL_BASE/changelog.log" >> /var/run/ota/ota.log 2>/dev/null
+            changelog_fetched=1
+        fi
         echo "</pre>" >> /var/run/ota/ota.log
     done
 

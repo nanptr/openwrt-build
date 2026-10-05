@@ -276,9 +276,9 @@ jobs:
 
         printf '%s\n' "${OTA_VERSION_KEY}" > release-bundle/version.index
 
-        # 更新日志：固件端 ota check 会拉取 ${OTA_VERSION_KEY}.log 显示 ChangeLog，
-        # 且只有最新版本的 log 会被读取，所以每个 Release 只保留这一份
-        cp release.txt "release-bundle/${OTA_VERSION_KEY}.log"
+        # 更新日志：固定文件名 changelog.log，固件端 ota check 读取它显示 ChangeLog；
+        # 同名资产上传时会覆盖，配合下面的清理步骤保证 Release 中只有这一份 log
+        cp release.txt release-bundle/changelog.log
 
         printf '%s\n' \
           "<br><a href=\"${OTA_RELEASES_URL}\" target=\"_blank\" rel=\"noopener noreferrer\">GitHub Releases</a>" \
