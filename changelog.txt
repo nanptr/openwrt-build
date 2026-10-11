@@ -1,0 +1,6 @@
+25.12.5-r58 — 2026-10-12 01:06
+上游 openwrt-25.12 更新（1 个提交）：
+  - uboot-mediatek: fix malformed patch
+本仓库变更：
+  - ci: changelog 自动生成——汇总两次构建间上游提交与本仓库变更
+
