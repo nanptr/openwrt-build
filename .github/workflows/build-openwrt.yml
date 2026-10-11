@@ -206,6 +206,8 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v6
+      with:
+        fetch-depth: 0
 
     - name: Load OpenWrt version
       run: |
@@ -239,6 +241,54 @@ jobs:
           echo "No firmware files found in release-assets."
           exit 1
         fi
+
+    - name: Generate changelog
+      env:
+        OTA_VERSION_KEY: ${{ needs.build.outputs.ota_version }}
+        UPSTREAM_REPO: https://github.com/openwrt/openwrt
+      run: |
+        new_rev="$(tr -d '\n' < openwrt-revision.txt)"
+
+        # 上次构建对应的上游 revision = openwrt-revision.txt 上一次被修改时的值
+        mapfile -t rev_commits < <(git log -n 2 --format=%H -- openwrt-revision.txt)
+        prev_rev=""
+        prev_bump_commit=""
+        if [ "${#rev_commits[@]}" -ge 2 ]; then
+          prev_bump_commit="${rev_commits[1]}"
+          prev_rev="$(git show "${prev_bump_commit}:openwrt-revision.txt" | tr -d '\n')"
+        fi
+
+        echo "${OTA_VERSION_KEY} — $(TZ=Asia/Shanghai date '+%Y-%m-%d %H:%M')" > new-entry.txt
+        if [ -n "${prev_rev}" ] && [ "${prev_rev}" != "${new_rev}" ]; then
+          git fetch --filter=blob:none --no-tags "${UPSTREAM_REPO}" "${prev_rev}" "${new_rev}"
+          count="$(git rev-list --count "${prev_rev}..${new_rev}")"
+          echo "上游 openwrt-25.12 更新（${count} 个提交）：" >> new-entry.txt
+          git log -n 20 --format='  - %s' "${prev_rev}..${new_rev}" >> new-entry.txt
+          if [ "${count}" -gt 20 ]; then
+            echo "  - … 等共 ${count} 个提交" >> new-entry.txt
+          fi
+        else
+          echo "上游无新提交（重新构建）。" >> new-entry.txt
+        fi
+
+        # 本仓库自上次构建以来的配置/脚本变更
+        range="${prev_bump_commit:-$(git rev-list --max-parents=0 HEAD)}"
+        changes="$(git log --format='  - %s' "${range}..HEAD" -- . ':!openwrt-revision.txt' ':!changelog.txt' | grep -v -- '- Bump openwrt-' || true)"
+        if [ -n "${changes}" ]; then
+          {
+            echo "本仓库变更："
+            printf '%s\n' "${changes}"
+          } >> new-entry.txt
+        fi
+
+        # 累加到 changelog.txt，只保留最近 100 行，避免无限增长
+        [ -f changelog.txt ] || touch changelog.txt
+        { cat new-entry.txt; echo; cat changelog.txt; } > changelog.tmp
+        head -n 100 changelog.tmp > changelog.txt
+
+        cp changelog.txt release-bundle/changelog.log
+        echo "---- 本次 changelog 条目 ----"
+        cat new-entry.txt
 
     - name: Generate release notes
       run: |
@@ -276,10 +326,6 @@ jobs:
 
         printf '%s\n' "${OTA_VERSION_KEY}" > release-bundle/version.index
 
-        # 更新日志：固定文件名 changelog.log，固件端 ota check 读取它显示 ChangeLog；
-        # 同名资产上传时会覆盖，配合下面的清理步骤保证 Release 中只有这一份 log
-        cp release.txt release-bundle/changelog.log
-
         printf '%s\n' \
           "<br><a href=\"${OTA_RELEASES_URL}\" target=\"_blank\" rel=\"noopener noreferrer\">GitHub Releases</a>" \
           > release-bundle/ota.footer.html
@@ -296,6 +342,19 @@ jobs:
           '  ]' \
           '}' \
           > release-bundle/fw.json
+
+    - name: Commit changelog
+      env:
+        OTA_VERSION_KEY: ${{ needs.build.outputs.ota_version }}
+      run: |
+        git config user.name "github-actions[bot]"
+        git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+        git add changelog.txt
+        if ! git diff --cached --quiet; then
+          git commit -m "Update changelog for ${OTA_VERSION_KEY}"
+          git pull --rebase
+          git push
+        fi
 
     - name: Remove stale changelog logs from release
       env:
