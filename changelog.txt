@@ -1,3 +1,7 @@
+25.12.5-r60 — 2026-10-17 16:57
+上游 openwrt-25.12 更新（1 个提交）：
+  - airoha: backport EN7581 device-tree updates
+
 25.12.5-r59 — 2026-10-16 17:13
 上游 openwrt-25.12 更新（5 个提交）：
   - hostapd: bump PKG_RELEASE
