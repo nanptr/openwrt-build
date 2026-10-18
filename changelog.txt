@@ -1,3 +1,9 @@
+25.12.5-r61 — 2026-10-18 16:37
+上游 openwrt-25.12 更新（3 个提交）：
+  - OpenWrt v25.12.6: revert to branch defaults
+  - OpenWrt v25.12.6: adjust config defaults
+  - mac80211: realtek: use long TX report timeout for non-PCIe
+
 25.12.5-r60 — 2026-10-17 16:57
 上游 openwrt-25.12 更新（1 个提交）：
   - airoha: backport EN7581 device-tree updates
