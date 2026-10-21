@@ -1,3 +1,9 @@
+25.12.5-r62 — 2026-10-21 17:12
+上游 openwrt-25.12 更新（3 个提交）：
+  - ca-certificates: blacklist "emSign ECC Root CA - G3"
+  - ipq806x: stmmac: force netdev name from DT ethernet alias
+  - ipq806x: fix ethernet aliases
+
 25.12.5-r61 — 2026-10-18 16:37
 上游 openwrt-25.12 更新（3 个提交）：
   - OpenWrt v25.12.6: revert to branch defaults
