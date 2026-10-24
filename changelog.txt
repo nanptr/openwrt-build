@@ -1,3 +1,14 @@
+25.12.5-r63 — 2026-10-24 16:46
+上游 openwrt-25.12 更新（8 个提交）：
+  - qualcommax: ipq50xx: ess-switch: Remove AHB reset quirk
+  - qca-ssdk: update to Git HEAD (2026-06-04)
+  - qualcommax: ipq50xx: remove SGMII auto-negotiation for fixed links
+  - wifi-scripts: mac80211: fix 6 GHz 40 MHz channel configuration for non-AP modes
+  - airoha: backport additional airoha_eth patches
+  - airoha: backport additional fixes for ethernet driver
+  - airoha: grow the small RX rings
+  - airoha: make PM domain driver working for AN7583
+
 25.12.5-r62 — 2026-10-21 17:12
 上游 openwrt-25.12 更新（3 个提交）：
   - ca-certificates: blacklist "emSign ECC Root CA - G3"
