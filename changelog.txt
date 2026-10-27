@@ -1,3 +1,11 @@
+25.12.5-r64 — 2026-10-27 17:44
+上游 openwrt-25.12 更新（5 个提交）：
+  - airoha: backport LRO offload patch
+  - airoha: backport on-demand GDM3/GDM4 QoS configuration
+  - ramips: mt7621: fix SATA detection on MQMaker WiTi
+  - qca-ssdk: update to Git HEAD (2026-06-04)
+  - Revert "qca-ssdk: update to Git HEAD (2026-06-04)"
+
 25.12.5-r63 — 2026-10-24 16:46
 上游 openwrt-25.12 更新（8 个提交）：
   - qualcommax: ipq50xx: ess-switch: Remove AHB reset quirk
