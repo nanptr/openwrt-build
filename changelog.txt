@@ -1,3 +1,8 @@
+25.12.5-r65 — 2026-10-28 18:50
+上游 openwrt-25.12 更新（2 个提交）：
+  - airoha: backport LRO offload patch
+  - Revert "airoha: backport LRO offload patch"
+
 25.12.5-r64 — 2026-10-27 17:44
 上游 openwrt-25.12 更新（5 个提交）：
   - airoha: backport LRO offload patch
