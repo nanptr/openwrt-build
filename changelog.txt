@@ -1,3 +1,7 @@
+25.12.5-r66 — 2026-10-29 18:48
+上游 openwrt-25.12 更新（1 个提交）：
+  - treewide: handle name collisions in set_netdev_labels
+
 25.12.5-r65 — 2026-10-28 18:50
 上游 openwrt-25.12 更新（2 个提交）：
   - airoha: backport LRO offload patch
