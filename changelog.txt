@@ -1,3 +1,10 @@
+25.12.5-r67 — 2026-10-30 18:50
+上游 openwrt-25.12 更新（4 个提交）：
+  - uboot-mediatek: wl-wnt100x3: reduce ram speed to 1866 MT/s
+  - wifi-scripts: fix macaddr lookup in utils.uc
+  - dnsmasq: cherrypick upstream to fix slow loading
+  - toolchain: musl: fix multiple integer overflows in regcomp
+
 25.12.5-r66 — 2026-10-29 18:48
 上游 openwrt-25.12 更新（1 个提交）：
   - treewide: handle name collisions in set_netdev_labels
