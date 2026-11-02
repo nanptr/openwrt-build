@@ -1,3 +1,8 @@
+25.12.5-r69 — 2026-11-02 19:07
+上游 openwrt-25.12 更新（2 个提交）：
+  - mpc85xx: relocate simpleImage for WS-AP3710i
+  - lldpd: bump to 1.0.22
+
 25.12.5-r68 — 2026-10-31 18:34
 上游 openwrt-25.12 更新（1 个提交）：
   - kernel: bump 6.12 to 6.12.113
