@@ -1,3 +1,9 @@
+25.12.5-r70 — 2026-11-04 19:11
+上游 openwrt-25.12 更新（3 个提交）：
+  - libubox: update to Git openwrt-25.12 (2026-11-03)
+  - ipq40xx: whw03v2: fix PHY reset GPIO description
+  - ipq40xx: revert qcom_scm SDI/download mode probe change
+
 25.12.5-r69 — 2026-11-02 19:07
 上游 openwrt-25.12 更新（2 个提交）：
   - mpc85xx: relocate simpleImage for WS-AP3710i
