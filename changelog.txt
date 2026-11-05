@@ -1,3 +1,7 @@
+25.12.5-r71 — 2026-11-05 19:20
+上游 openwrt-25.12 更新（1 个提交）：
+  - hostapd: silence unexpected link measurement report log
+
 25.12.5-r70 — 2026-11-04 19:11
 上游 openwrt-25.12 更新（3 个提交）：
   - libubox: update to Git openwrt-25.12 (2026-11-03)
