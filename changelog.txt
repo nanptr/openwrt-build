@@ -1,3 +1,9 @@
+25.12.5-r72 — 2026-11-06 18:53
+上游 openwrt-25.12 更新（3 个提交）：
+  - uhttpd: update to Git HEAD (2026-11-05)
+  - uhttpd: update to Git HEAD (2026-10-19)
+  - tools: bc: update to 1.08.2
+
 25.12.5-r71 — 2026-11-05 19:20
 上游 openwrt-25.12 更新（1 个提交）：
   - hostapd: silence unexpected link measurement report log
