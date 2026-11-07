@@ -1,3 +1,10 @@
+25.12.5-r73 — 2026-11-07 18:55
+上游 openwrt-25.12 更新（4 个提交）：
+  - airoha: backport MT7530 port statistics changes
+  - wifi-scripts: ucode: check wpa_supplicant exists before mesh probe
+  - wifi-scripts: ucode: remove trailing whitespace
+  - wifi-scripts: ucode: only set antenna when config changes
+
 25.12.5-r72 — 2026-11-06 18:53
 上游 openwrt-25.12 更新（3 个提交）：
   - uhttpd: update to Git HEAD (2026-11-05)
