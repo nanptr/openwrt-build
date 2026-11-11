@@ -1,3 +1,17 @@
+25.12.5-r75 — 2026-11-11 19:15
+上游 openwrt-25.12 更新（11 个提交）：
+  - ucode: backport ubus request prototype fix
+  - ucode: backport socket fix for 64-bit big-endian
+  - wifi-scripts: fix undeclared variable in service wifi-device injection
+  - ucode: update to Git HEAD (2026-07-09)
+  - ucode: fix two compiler issues
+  - ucode: update to Git HEAD (2026-06-03)
+  - ucode: update to Git HEAD (2026-04-24)
+  - ucode: nl80211: fix HE MCS parsing
+  - ucode: nl80211: add missing survey info attributes and fix DFS CAC time
+  - ucode: update to Git HEAD (2026-02-27)
+  - ath79: add supported device alias for D-Link DIR825-b1
+
 25.12.5-r74 — 2026-11-10 20:06
 上游 openwrt-25.12 更新（8 个提交）：
   - kernel: bump 6.12 to 6.12.116
@@ -84,17 +98,3 @@
 
 25.12.5-r61 — 2026-10-18 16:37
 上游 openwrt-25.12 更新（3 个提交）：
-  - OpenWrt v25.12.6: revert to branch defaults
-  - OpenWrt v25.12.6: adjust config defaults
-  - mac80211: realtek: use long TX report timeout for non-PCIe
-
-25.12.5-r60 — 2026-10-17 16:57
-上游 openwrt-25.12 更新（1 个提交）：
-  - airoha: backport EN7581 device-tree updates
-
-25.12.5-r59 — 2026-10-16 17:13
-上游 openwrt-25.12 更新（5 个提交）：
-  - hostapd: bump PKG_RELEASE
-  - hostapd: ubus: fix beacon request reporting detail field size
-  - hostapd: ubus: fix beacon request buffer overflow with reporting detail
-  - hostapd: add reporting detail support to RRM beacon request
