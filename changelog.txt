@@ -1,3 +1,8 @@
+25.12.5-r76 — 2026-11-12 20:02
+上游 openwrt-25.12 更新（2 个提交）：
+  - ipq806x: set device-specific mac for AP-325
+  - imx: disable unused 8250 serial driver
+
 25.12.5-r75 — 2026-11-11 19:15
 上游 openwrt-25.12 更新（11 个提交）：
   - ucode: backport ubus request prototype fix
@@ -93,8 +98,3 @@
 25.12.5-r62 — 2026-10-21 17:12
 上游 openwrt-25.12 更新（3 个提交）：
   - ca-certificates: blacklist "emSign ECC Root CA - G3"
-  - ipq806x: stmmac: force netdev name from DT ethernet alias
-  - ipq806x: fix ethernet aliases
-
-25.12.5-r61 — 2026-10-18 16:37
-上游 openwrt-25.12 更新（3 个提交）：
