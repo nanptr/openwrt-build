@@ -1,3 +1,11 @@
+25.12.5-r77 — 2026-11-13 19:09
+上游 openwrt-25.12 更新（5 个提交）：
+  - ipq806x: use custom Aruba AP-325 BDF
+  - ipq-wifi: add Aruba AP-325 BDF
+  - ipq-wifi: update to latest HEAD
+  - airoha: nvmem: fix SMC function ID for eFuse read
+  - airoha: backport nvmem support for SMC eFUSE
+
 25.12.5-r76 — 2026-11-12 20:02
 上游 openwrt-25.12 更新（2 个提交）：
   - ipq806x: set device-specific mac for AP-325
@@ -90,11 +98,3 @@
   - qca-ssdk: update to Git HEAD (2026-06-04)
   - qualcommax: ipq50xx: remove SGMII auto-negotiation for fixed links
   - wifi-scripts: mac80211: fix 6 GHz 40 MHz channel configuration for non-AP modes
-  - airoha: backport additional airoha_eth patches
-  - airoha: backport additional fixes for ethernet driver
-  - airoha: grow the small RX rings
-  - airoha: make PM domain driver working for AN7583
-
-25.12.5-r62 — 2026-10-21 17:12
-上游 openwrt-25.12 更新（3 个提交）：
-  - ca-certificates: blacklist "emSign ECC Root CA - G3"
