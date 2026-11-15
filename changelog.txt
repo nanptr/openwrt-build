@@ -1,3 +1,8 @@
+25.12.5-r78 — 2026-11-15 19:01
+上游 openwrt-25.12 更新（2 个提交）：
+  - ipq40xx: use board-specific Aruba BDFs
+  - ipq-wifi: add BDFs for IPQ4019 Aruba boards
+
 25.12.5-r77 — 2026-11-13 19:09
 上游 openwrt-25.12 更新（5 个提交）：
   - ipq806x: use custom Aruba AP-325 BDF
@@ -93,8 +98,3 @@
   - Revert "qca-ssdk: update to Git HEAD (2026-06-04)"
 
 25.12.5-r63 — 2026-10-24 16:46
-上游 openwrt-25.12 更新（8 个提交）：
-  - qualcommax: ipq50xx: ess-switch: Remove AHB reset quirk
-  - qca-ssdk: update to Git HEAD (2026-06-04)
-  - qualcommax: ipq50xx: remove SGMII auto-negotiation for fixed links
-  - wifi-scripts: mac80211: fix 6 GHz 40 MHz channel configuration for non-AP modes
