@@ -1,3 +1,8 @@
+25.12.5-r79 — 2026-11-16 19:12
+上游 openwrt-25.12 更新（2 个提交）：
+  - px5g-mbedtls: reject unsupported -addext values
+  - px5g-mbedtls: fix the subjectAltName extension
+
 25.12.5-r78 — 2026-11-15 19:01
 上游 openwrt-25.12 更新（2 个提交）：
   - ipq40xx: use board-specific Aruba BDFs
@@ -93,8 +98,3 @@
 上游 openwrt-25.12 更新（5 个提交）：
   - airoha: backport LRO offload patch
   - airoha: backport on-demand GDM3/GDM4 QoS configuration
-  - ramips: mt7621: fix SATA detection on MQMaker WiTi
-  - qca-ssdk: update to Git HEAD (2026-06-04)
-  - Revert "qca-ssdk: update to Git HEAD (2026-06-04)"
-
-25.12.5-r63 — 2026-10-24 16:46
