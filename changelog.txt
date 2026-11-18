@@ -1,3 +1,11 @@
+25.12.5-r81 — 2026-11-18 20:27
+上游 openwrt-25.12 更新（5 个提交）：
+  - airoha: backport PCI mediatek-gen3 link speed/width patches
+  - airoha: backport NPU fix for missing streaming DMA mask
+  - airoha: backport EN7581 NPU DT bindings
+  - airoha: npu: update firmware loading patch to the upstream version
+  - ipq40xx: fix LAN/WAN MAC address on ASUS Lyra Mini
+
 25.12.5-r80 — 2026-11-17 20:25
 上游 openwrt-25.12 更新（1 个提交）：
   - mpc85xx: relocate simpleImage loader to 0x3000000
@@ -90,11 +98,3 @@
   - toolchain: musl: fix multiple integer overflows in regcomp
 
 25.12.5-r66 — 2026-10-29 18:48
-上游 openwrt-25.12 更新（1 个提交）：
-  - treewide: handle name collisions in set_netdev_labels
-
-25.12.5-r65 — 2026-10-28 18:50
-上游 openwrt-25.12 更新（2 个提交）：
-  - airoha: backport LRO offload patch
-  - Revert "airoha: backport LRO offload patch"
-
