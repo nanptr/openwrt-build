@@ -1,3 +1,13 @@
+25.12.5-r82 — 2026-11-19 20:08
+上游 openwrt-25.12 更新（7 个提交）：
+  - airoha: Fix NPU mailbox DMA direction (CVE-2026-68330)
+  - ramips: mt7620: enable LIST_HARDENED again
+  - ramips: rt305x: keep the kernel code out of the first 32 KiB
+  - ramips: free the padding in front of the kernel text
+  - generic: mips: keep module code out of the first 32 KiB
+  - ramips: mt7620: drop the workarounds for the EPC erratum
+  - ramips: mt7620: keep the kernel code out of the first 32 KiB
+
 25.12.5-r81 — 2026-11-18 20:27
 上游 openwrt-25.12 更新（5 个提交）：
   - airoha: backport PCI mediatek-gen3 link speed/width patches
@@ -88,13 +98,3 @@
 
 25.12.5-r68 — 2026-10-31 18:34
 上游 openwrt-25.12 更新（1 个提交）：
-  - kernel: bump 6.12 to 6.12.113
-
-25.12.5-r67 — 2026-10-30 18:50
-上游 openwrt-25.12 更新（4 个提交）：
-  - uboot-mediatek: wl-wnt100x3: reduce ram speed to 1866 MT/s
-  - wifi-scripts: fix macaddr lookup in utils.uc
-  - dnsmasq: cherrypick upstream to fix slow loading
-  - toolchain: musl: fix multiple integer overflows in regcomp
-
-25.12.5-r66 — 2026-10-29 18:48
