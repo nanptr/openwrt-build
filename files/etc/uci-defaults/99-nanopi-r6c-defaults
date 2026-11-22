@@ -31,4 +31,14 @@ commit firewall
 commit ttyd
 EOF
 
+# OTA 下载走本机代理（凭据在 /etc/ota-proxy.conf，不进公开仓库）
+if [ -f /etc/ota-proxy.conf ] && ! grep -q OTA_PROXY_INJECTED /bin/ota 2>/dev/null; then
+	sed -i '2i [ -f /etc/ota-proxy.conf ] && . /etc/ota-proxy.conf # OTA_PROXY_INJECTED' /bin/ota
+fi
+
+# nikki 冷启动缓存跨 sysupgrade 保留；sysupgrade.conf 自引用，防止清单自身被重置
+for p in /etc/nikki-cache /etc/ota-proxy.conf /etc/sysupgrade.conf; do
+	grep -qx "$p" /etc/sysupgrade.conf 2>/dev/null || echo "$p" >> /etc/sysupgrade.conf
+done
+
 exit 0
