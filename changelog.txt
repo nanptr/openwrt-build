@@ -1,3 +1,12 @@
+25.12.5-r84 — 2026-11-23 20:19
+上游 openwrt-25.12 更新（4 个提交）：
+  - kernel: bump 6.12 to 6.12.118
+  - kernel: bump 6.12 to 6.12.117
+  - kernel: add missing patch headers
+  - kernel: add missing patch header lines
+本仓库变更：
+  - uci-defaults: restore OTA proxy injection and nikki cache persistence
+
 25.12.5-r83 — 2026-11-22 10:13
 上游 openwrt-25.12 更新（7 个提交）：
   - airoha: Fix NPU mailbox DMA direction (CVE-2026-68330)
@@ -89,12 +98,3 @@
 
 25.12.5-r72 — 2026-11-06 18:53
 上游 openwrt-25.12 更新（3 个提交）：
-  - uhttpd: update to Git HEAD (2026-11-05)
-  - uhttpd: update to Git HEAD (2026-10-19)
-  - tools: bc: update to 1.08.2
-
-25.12.5-r71 — 2026-11-05 19:20
-上游 openwrt-25.12 更新（1 个提交）：
-  - hostapd: silence unexpected link measurement report log
-
-25.12.5-r70 — 2026-11-04 19:11
