@@ -1,3 +1,23 @@
+25.12.5-r85 — 2026-11-24 22:02
+上游 openwrt-25.12 更新（17 个提交）：
+  - ipq40xx: fix sysupgrade images for Netgear Orbi
+  - airoha: fix watchdog zero clock frequency (CVE-2026-68356)
+  - airoha: fix MDIO regmap error handling (CVE-2025-68187)
+  - ipq806x: refresh patches
+  - ipq806x: backport stmmac UDP checksum fixes
+  - rockchip: enable SDIO Wi-Fi on NanoPi R2S Plus
+  - generic: backport SDIO UHS fixes for cards misreporting S18A
+  - tools/7z: update to 26.03
+  - linux-firmware: update to 20261019
+  - linux-firmware: update to 20260916
+  - linux-firmware: update to 20260910
+  - linux-firmware: update to 20260810
+  - linux-firmware: update 20260622
+  - linux-firmware: update to 20260519
+  - firmware: better specify the supported WiFi chip for basic AN7581 NPU FW
+  - linux-firmware: update to 20260410
+  - linux-firmware: update to 20260309
+
 25.12.5-r84 — 2026-11-23 20:19
 上游 openwrt-25.12 更新（4 个提交）：
   - kernel: bump 6.12 to 6.12.118
@@ -78,23 +98,3 @@
   - ucode: update to Git HEAD (2026-02-27)
   - ath79: add supported device alias for D-Link DIR825-b1
 
-25.12.5-r74 — 2026-11-10 20:06
-上游 openwrt-25.12 更新（8 个提交）：
-  - kernel: bump 6.12 to 6.12.116
-  - kernel: bump 6.12 to 6.12.115
-  - kernel: bump 6.12 to 6.12.114
-  - nat46: fix build on 6.12.114+
-  - nat46: fix reproducible-build failure and use latest git
-  - mac80211: fix netns_immutable backport for kernel 6.12.114+
-  - strace: use bundled kernel headers
-  - strace: update to 6.18
-
-25.12.5-r73 — 2026-11-07 18:55
-上游 openwrt-25.12 更新（4 个提交）：
-  - airoha: backport MT7530 port statistics changes
-  - wifi-scripts: ucode: check wpa_supplicant exists before mesh probe
-  - wifi-scripts: ucode: remove trailing whitespace
-  - wifi-scripts: ucode: only set antenna when config changes
-
-25.12.5-r72 — 2026-11-06 18:53
-上游 openwrt-25.12 更新（3 个提交）：
