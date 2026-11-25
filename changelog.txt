@@ -1,3 +1,8 @@
+25.12.5-r86 — 2026-11-25 21:30
+上游 openwrt-25.12 更新（2 个提交）：
+  - ppp: fix default config
+  - ppp: update MPPE options in PPTP configuration
+
 25.12.5-r85 — 2026-11-24 22:02
 上游 openwrt-25.12 更新（17 个提交）：
   - ipq40xx: fix sysupgrade images for Netgear Orbi
@@ -93,8 +98,3 @@
   - ucode: fix two compiler issues
   - ucode: update to Git HEAD (2026-06-03)
   - ucode: update to Git HEAD (2026-04-24)
-  - ucode: nl80211: fix HE MCS parsing
-  - ucode: nl80211: add missing survey info attributes and fix DFS CAC time
-  - ucode: update to Git HEAD (2026-02-27)
-  - ath79: add supported device alias for D-Link DIR825-b1
-
