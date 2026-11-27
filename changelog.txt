@@ -1,3 +1,7 @@
+25.12.5-r87 — 2026-11-27 20:33
+上游 openwrt-25.12 更新（1 个提交）：
+  - build: create CONTROL before writing files-sha256sum
+
 25.12.5-r86 — 2026-11-25 21:30
 上游 openwrt-25.12 更新（2 个提交）：
   - ppp: fix default config
@@ -94,7 +98,3 @@
   - ucode: backport ubus request prototype fix
   - ucode: backport socket fix for 64-bit big-endian
   - wifi-scripts: fix undeclared variable in service wifi-device injection
-  - ucode: update to Git HEAD (2026-07-09)
-  - ucode: fix two compiler issues
-  - ucode: update to Git HEAD (2026-06-03)
-  - ucode: update to Git HEAD (2026-04-24)
